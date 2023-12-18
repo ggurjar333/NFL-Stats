@@ -59,3 +59,14 @@ What are the python packages used?
 - `win_inet_pton`
 - `xz`
 - `zlib`
+
+
+Contribution
+------------
+If you want to contribute, please follow these steps:
+
+1. Fork the repository and clone it to your machine
+2. Create a new branch for your changes
+3. Commit your changes in that branch
+4. Push your changes to your fork
+5. Submit a pull request explaining your changes.
