@@ -1,10 +1,8 @@
 import requests
-# from typing import Self, Any
 from urllib3.util.retry import Retry
 from pydantic import HttpUrl
 from requests.adapters import HTTPAdapter
 
-# import sportsradar
 from src.sportsradar import logging_helpers
 
 logger = logging_helpers.get_logger(__name__)
@@ -55,16 +53,3 @@ class DataStore:
 
     def fetch_data(self, url):
         return self.datakeeper.fetch_data(url)
-
-
-# # Usage:
-# # Create a SportsRadarFetcher instance
-# datakeeper = SportsRadarFetcher()
-#
-# # Pass the instance to DataStore
-# data_store = DataStore(datakeeper)
-#
-# # Fetch data from a specific URL
-# url_to_fetch = 'http://example.com'  # replace with your actual URL
-# data = data_store.fetch_data(url_to_fetch)
-# print(data.status_code, data.text)  # prints the status code and content of the response
