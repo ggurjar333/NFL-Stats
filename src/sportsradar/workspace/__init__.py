@@ -1,1 +1,1 @@
-from sportsradar import *
+from src.sportsradar import *

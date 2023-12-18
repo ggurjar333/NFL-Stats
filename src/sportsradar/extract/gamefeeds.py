@@ -4,7 +4,7 @@ from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 logger = logging_helpers.get_logger(__name__)
 
 
-class GameFeeds:
+class GameFeeds():
     """ This class is responsible for extracting game feeds from SportsRadar"""
     def __init__(self, base_url):
         """
