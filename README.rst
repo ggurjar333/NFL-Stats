@@ -1,8 +1,26 @@
-# NFL-Stats
+===============================================================================
+NFL-Stats
+===============================================================================
 
+.. readme-intro
+.. image:: https://www.repostatus.org/badges/latest/active.svg
+   :target: https://www.repostatus.org/#active
+   :alt: Project Status: Active
+
+What is NFL-Stats?
+-----------------
 This is a Python-based project aimed to collect and analyze statistics from National Football League (NFL) games. The `Python 3.10.13` programming language and a variety of packages are leveraged for this purpose.
 
-#### Packages:
+What data source is used?
+-------------------------
+NFL-Stats currently integrates data from:
+
+* `Sports Radar <https://www.sportsradar.com/>`__
+
+This allows us to acquire accurate data and perform insightful statistical analysis.
+
+What are the python packages used?
+-----------------------------
 - `annotated-types`
 - `brotli-python`
 - `bzip2`
@@ -41,5 +59,3 @@ This is a Python-based project aimed to collect and analyze statistics from Nati
 - `win_inet_pton`
 - `xz`
 - `zlib`
-
-Our data source is directly sourced from Sportsradar.com. This allows us to acquire accurate data and perform insightful statistical analysis.
