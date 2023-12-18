@@ -1,7 +1,3 @@
-import os
-
-import requests
-
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
