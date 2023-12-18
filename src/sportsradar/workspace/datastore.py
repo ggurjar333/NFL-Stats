@@ -1,5 +1,4 @@
 import requests
-from pip._internal.network.session import HTTPAdapter
 # from typing import Self, Any
 from urllib3.util.retry import Retry
 from pydantic import HttpUrl
@@ -14,23 +13,16 @@ logger = logging_helpers.get_logger(__name__)
 class SportsRadarFetcher:
     """
     This class is responsible for fetching
-     data from SportsRadar.
-
+    data from SportsRadar.
 
     Attributes:
         timeout (float): The timeout value
-          for HTTP requests.
+        for HTTP requests.
         http (requests.Session): The HTTP
-          session to use for requests.
+        session to use for requests.
     """
+
     def __init__(self, timeout: float = 15):
-        """
-        Constructs a new 'SportsRadarFetcher'
-          object.
-        :param timeout: The timeout value for
-           HTTP requests.
-        :return: returns nothing
-        """
         self.timeout = timeout
         retries = Retry(total=3, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
         adapter = HTTPAdapter(max_retries=retries)
@@ -39,14 +31,6 @@ class SportsRadarFetcher:
         self.http.mount("https://", adapter)
 
     def _fetch_from_url(self, url: HttpUrl) -> requests.Response:
-        """
-        Fetches data from from a given URL.
-
-        :param url: The URL to fetch data from
-          from.
-        :return: The response from the HTTP
-          request.
-        """
         logger.info(f"Retrieving {url} from SportsRadar")
         response = self.http.get(url, timeout=self.timeout)
         if response.status_code == requests.codes.ok:
@@ -60,26 +44,27 @@ class SportsRadarFetcher:
 
 class DataStore:
     """
-    This class uses SportsRadarFetcher to fetch data.
+    This class used to fetch data.
 
     Attributes:
-        sports_radar_fetcher (SportsRadarFetcher): The SportsRadarFetcher instance to use for fetching data.
+        datakeeper (SportsRadarFetcher): The instance to use for fetching data.
     """
-    def __init__(self, sports_radar_fetcher):
-        """
-        Constructs a new 'DataStore' object.
 
-        :param sports_radar_fetcher: The SportsRadarFetcher instance.
-        :return: returns nothing
-        """
-        self.sports_radar_fetcher = sports_radar_fetcher
+    def __init__(self, datakeeper):
+        self.datakeeper = datakeeper
 
     def fetch_data(self, url):
-        """
-        Fetches data from a given URL using the SportsRadarFetcher instance.
+        return self.datakeeper.fetch_data(url)
 
-        :param url: The URL to fetch data from.
-        :return: The response from the HTTP request.
-        """
 
-        return self.sports_radar_fetcher.fetch_data(url)
+# # Usage:
+# # Create a SportsRadarFetcher instance
+# datakeeper = SportsRadarFetcher()
+#
+# # Pass the instance to DataStore
+# data_store = DataStore(datakeeper)
+#
+# # Fetch data from a specific URL
+# url_to_fetch = 'http://example.com'  # replace with your actual URL
+# data = data_store.fetch_data(url_to_fetch)
+# print(data.status_code, data.text)  # prints the status code and content of the response

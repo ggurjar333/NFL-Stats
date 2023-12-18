@@ -28,6 +28,5 @@ class GameFeeds:
         :param week_number: The week number for which to retrieve the schedule.
         :return: The weekly schedule data.
         """
-        sports_radar = SportsRadarFetcher()
-        datastore = DataStore(sports_radar)
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
         return datastore.fetch_data(url=f"{self.base_url}/{season_year}/{season_type}/{week_number}")
