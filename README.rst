@@ -17,7 +17,7 @@ NFL-Stats currently integrates data from:
 
 * `Sports Radar <https://www.sportsradar.com/>`__
 
-This allows us to acquire accurate data and perform insightful statistical analysis.
+It allows to acquire accurate data and perform insightful statistical analysis.
 
 What are the python packages used?
 -----------------------------
