@@ -1,4 +1,9 @@
+import os
+
 import requests
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+
 from urllib3.util.retry import Retry
 from pydantic import HttpUrl
 from requests.adapters import HTTPAdapter
@@ -50,6 +55,16 @@ class DataStore:
 
     def __init__(self, datakeeper):
         self.datakeeper = datakeeper
+        self.mongo_client = MongoClient(host=os.environ.get("MONGODB_URL"), server_api=ServerApi('1'))
+        self.db = self.mongo_client[os.environ.get("MONGODB_DATABASE")]
 
     def fetch_data(self, url):
         return self.datakeeper.fetch_data(url)
+
+    def save_data(self, response, collection):
+        self.db[collection].insert_many(response.json())
+
+
+
+
+

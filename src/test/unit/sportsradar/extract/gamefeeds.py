@@ -29,6 +29,9 @@ def test_game_feeds_with_box_score(mock_data_store, mock_getenv):
                                           api_key=TestConstants.API_KEY)
     # Check
     assert result.status_code == 200
+    if result.status_code == 200:
+        data_store = DataStore()
+        data_json = data_store.save_data(response=result.json(), collection='game_boxscore')
 
 @patch('os.getenv', return_value=TestConstants.API_KEY)
 @patch('src.sportsradar.extract.gamefeeds.GameFeeds')
