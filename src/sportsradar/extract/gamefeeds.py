@@ -1,23 +1,26 @@
 import os
-
+from dotenv import load_dotenv
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
+
+load_dotenv('../../../.env')
+
 
 logger = logging_helpers.get_logger(__name__)
 
 
 class GameFeeds():
     """ This class is responsible for extracting game feeds from SportsRadar"""
+
     def __init__(self, base_url):
         """
         Initialize an instance of the class.
-
         :param base_url: The base URL for the API.
         :type base_url: str
         """
         self.base_url = base_url
 
-    def get_game_boxscore(self, access_level, version, language_code, game_id, file_format):
+    def get_game_boxscore(self, access_level, version, language_code, game_id, file_format, api_key):
         """
         Get the game boxscore for a given game_id
         :param access_level:
@@ -27,17 +30,12 @@ class GameFeeds():
         :param file_format:
         :return: The game boxscore for the given game_id
         """
+        # api_key = os.environ.get('APIKEY')
+        if not api_key:
+            logger.error('API key not found in environment variables.')
+            raise ValueError('API key not found in environment variables')
         datastore = DataStore(datakeeper=SportsRadarFetcher())
-        return datastore.fetch_data(url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/boxscore.{file_format}?api_key={os.environ.get('NFL_API_KEY')}")
-
-    def get_weekly_schedule(self, season_year, season_type, week_number):
-        """
-        Get the weekly schedule for a specific season, season type, and week number.
-
-        :param season_year: The year of the season.
-        :param season_type: The type of the season (e.g., current, postseason).
-        :param week_number: The week number for which to retrieve the schedule.
-        :return: The weekly schedule data.
-        """
-        datastore = DataStore(datakeeper=SportsRadarFetcher())
-        return datastore.fetch_data(url=f"{self.base_url}/{season_year}/{season_type}/{week_number}")
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/boxscore.{file_format}?api_key={api_key}")
+        logger.info('Data retrieved successfully.')
+        return result

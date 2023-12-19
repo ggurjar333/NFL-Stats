@@ -1,41 +1,29 @@
-import os
-import unittest
 from unittest.mock import patch, Mock
+from dotenv import load_dotenv
+import os
+
 from src.sportsradar.extract.gamefeeds import GameFeeds
+from src.sportsradar.workspace.datastore import DataStore
+
+load_dotenv('../../../../../.env')
 
 
-# 'http://api.sportradar.us/nfl/official/trial/v7/en/games/{season_year}/{season_type}/{week_number}/schedule.json?api_key={API_KEY}'
+class TestConstants():
+    BASE_URL = 'https://api.sportradar.us/nfl/official'
+    ACCESS_LEVEL = 'trial'
+    VERSION = 'v7'
+    LANGUAGE_CODE = 'en'
+    FORMAT = 'json'
+    API_KEY = f'{os.environ.get("APIKEY")}'
 
-class TestGameFeeds(unittest.TestCase):
-    """Unit tests for GameFeeds class."""
+@patch('os.getenv', return_value=TestConstants.API_KEY)
+@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
+def test_game_feeds_with_api_key(mock_data_store, mock_getenv):
 
-    @classmethod
-    def setUpClass(cls):
-        """Set up for all tests."""
-        cls.game_feeds = GameFeeds("http://api.sportradar.us/nfl/official/trial/v7/en/games")
+    # Execute
+    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+    result = game_feeds.get_game_boxscore(access_level=TestConstants.ACCESS_LEVEL, language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION, game_id=game_id, file_format=TestConstants.FORMAT, api_key=TestConstants.API_KEY)
+    # Check
+    assert result.status_code == 200
 
-    @patch('requests.get', autospec=True)
-    def test_get_weekly_schedule(self, mock_get):
-        """Test get_weekly_schedule method."""
-        # Arrange
-        mock_resp = Mock()
-        mock_resp.status_code = 200
-        mock_resp.json.return_value = {"arbitrary": "test_data"}
-        mock_get.return_value = mock_resp
-        season_year = '2023'
-        season_type = 'preseason'
-        week_number = '3'
-        api_key = os.getenv('API_KEY')  # Obtain the API key from an environment variable
-        # Act
-        result = self.game_feeds.get_weekly_schedule(season_year, season_type, week_number)
-        # Assert
-        mock_get.assert_called_with(
-            f"http://api.sportradar.us/nfl/official/trial/v7/en/games{season_year}/{season_type}/{week_number}/schedule.json?api_key={api_key}"
-        )
-        self.assertIsInstance(result, dict)
-        self.assertEqual(mock_resp.status_code, 200)
-
-
-# Instruct Python unittest framework to generate a test suite and run the tests.
-if __name__ == "__main__":
-    unittest.main()
