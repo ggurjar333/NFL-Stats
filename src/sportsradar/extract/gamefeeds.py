@@ -5,7 +5,6 @@ from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
 load_dotenv('../../../.env')
 
-
 logger = logging_helpers.get_logger(__name__)
 
 
@@ -28,6 +27,7 @@ class GameFeeds():
         :param language_code:
         :param game_id:
         :param file_format:
+        :param api_key:
         :return: The game boxscore for the given game_id
         """
         if not api_key:
@@ -36,5 +36,25 @@ class GameFeeds():
         datastore = DataStore(datakeeper=SportsRadarFetcher())
         result = datastore.fetch_data(
             url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/boxscore.{file_format}?api_key={api_key}")
+        logger.info('Data retrieved successfully.')
+        return result
+
+    def get_game_roster(self, access_level, version, language_code, game_id, file_format, api_key):
+        """
+        Get the game roster for a given game_id
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param game_id:
+        :param file_format:
+        :param api_key:
+        """
+        if not api_key:
+            logger.error('API key not found in environment variables.')
+            raise ValueError('API key not found in environment variables')
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/roster.{file_format}?api_key={api_key}"
+        )
         logger.info('Data retrieved successfully.')
         return result
