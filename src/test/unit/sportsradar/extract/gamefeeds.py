@@ -79,6 +79,13 @@ def test_game_feeds_with_current_week_schedule(mock_data_store, mock_getenv):
 @patch('src.sportsradar.extract.gamesfeeds.GamesFeeds')
 def test_game_feeds_with_season_schedule(mock_data_store, mock_getenv):
     #Execute
-    year = range(2021,2024)
-    season_type = ['REG', 'PST']
-    result = game_feeds.current_season(access_level=)
+    year = 2022
+    season_type = 'REG'
+    result = game_feeds.current_season(access_level=TestConstants.ACCESS_LEVEL,
+                                           language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
+                                           year=year, season_type=season_type,
+                                           file_format=TestConstants.FORMAT,
+                                           api_key = TestConstants.API_KEY
+                                        )
+
+    assert result.status_code == 200
