@@ -81,7 +81,7 @@ def test_game_feeds_with_season_schedule(mock_data_store, mock_getenv):
     #Execute
     year = 2022
     season_type = 'REG'
-    result = game_feeds.current_season(access_level=TestConstants.ACCESS_LEVEL,
+    result = game_feeds.get_seasons_schedule(access_level=TestConstants.ACCESS_LEVEL,
                                            language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
                                            year=year, season_type=season_type,
                                            file_format=TestConstants.FORMAT,
@@ -98,7 +98,7 @@ def test_game_feeds_with_weekly_schedule(mock_data_store, mock_getenv):
     year = 2022
     season_type = 'REG'
     week_number = datetime.now().isocalendar()[1] -7
-    result= game_feeds.current_week(access_level = TestConstants.ACCESS_LEVEL,
+    result= game_feeds.get_seasons_schedule(access_level = TestConstants.ACCESS_LEVEL,
                                     language_code=TestConstants.LANGUAGE_CODE,  version=TestConstants.VERSION,
                                     year=year, season_type=season_type, week_number=week_number,
                                     file_format=TestConstants.FORMAT,
