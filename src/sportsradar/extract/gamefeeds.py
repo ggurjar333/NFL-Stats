@@ -101,7 +101,7 @@ class GameFeeds():
         return result
 
     
-    def get_current_week_schedule():
+    def get_current_week_schedule(self, access_level, version, language_code, file_format, api_key):
         """
         Get the current week schedule
         
@@ -109,16 +109,66 @@ class GameFeeds():
         :param version:
         :param language_code:
         :param format:
-        :param api_key
+        :param api_key:
+
         """
         if not api_key:
             logger.error("API key not found in environment variables.")
             raise ValueError("API key not found in environment variables")
         datastore = DataStore(datakeeper=SportsRadarFetcher())
         result = datastore.fetch_data(
-            url = f"{self.base_url}/{access_level}/{version}/{language_code}/games/current_week/schedule{file_format}?api_key={api_key}"
+            url = f"{self.base_url}/{access_level}/{version}/{language_code}/games/current_week/schedule.{file_format}?api_key={api_key}"
         )
         logger.info('Data retrieved successfully')
         return result
+
+    def get_seasons_schedule(self, access_level, version, year, season_type, language_code, format, api_key):
+        """
+        Get the seasons schedule
+        :param access_level:
+        :param version: 
+        :param year:
+        :param season_type:
+        :param language_code:
+        :param format:
+        :param api_key:
+
+        """
+        if not api_key:
+            logger.error("API key not found in environment variable.")
+            raise ValueError("API key not found in environment variables")
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        result =datastore.fetch_data(
+            url = f"{self.base_url}/{access_level}/{version}/{language_code}/games/{year}/{season_type}/schedule.{file_format}?api_key={api_key}"
+
+        )
+        return result
+    
+
+    def get_weekly_schedule(self, access_level, version, year, season_type, week_number, language_code, format, api_key):
+        """
+        Get Weekly Schedule
+
+        :param access_level:
+        :param version: 
+        :param year:
+        :param season_type:
+        :param week_number:
+        :param language_code:
+        :param format:
+        :param api_key:
+       
+        """
+
+        if not api_key:
+            logger.error("API key not found in enviroment variable.")
+            raise ValueError("API key not found in environment variables")
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        result=datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{season_year}/{season_type}/{week_number}/schedule.{file_format}?api_key={api_key}"
+        )
+
+        return results
+
 
     
