@@ -78,3 +78,45 @@ class GameFeeds():
         )
         logger.info('Data retrieved successfully.')
         return result
+    
+
+    def get_current_season_schedule(self, access_level, version, language_code, game_id, file_format, api_key):
+        """
+        Get the current season schedule
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param format:
+        :param api_key:
+        """
+
+        if not api_key:
+            logger.error("API key not found in environment variables.")
+            raise ValueError("API key not found in environment variiables")
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/current_season/schedule.{file_format}?api_key={api_key}"
+        )
+        logger.info('Data retrieved successfully')
+        return result
+
+    
+    def get_current_week_schedule():
+        """
+        Get the current week schedule
+        
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param format:
+        :param api_key
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables.")
+            raise ValueError("API key not founf in environment variables")
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url = f"{self.base_url}/{access_level}/{version}/{language_code}/games/current_week/schedule{file_format}?api_key={api_key}"
+        )
+        logger.info('Data retrieved successfully')
+        return result
