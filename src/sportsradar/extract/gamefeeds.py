@@ -30,7 +30,6 @@ class GameFeeds():
         :param file_format:
         :return: The game boxscore for the given game_id
         """
-        # api_key = os.environ.get('APIKEY')
         if not api_key:
             logger.error('API key not found in environment variables.')
             raise ValueError('API key not found in environment variables')
