@@ -41,3 +41,16 @@ def test_game_feeds_with_game_roster(mock_data_store, mock_getenv):
                                         game_id=game_id, file_format=TestConstants.FORMAT,
                                         api_key=TestConstants.API_KEY)
     assert result.status_code == 200
+
+
+@patch('os.getenv', return_value=TestConstants.API_KEY)
+@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
+def test_game_feeds_with_game_statistics(mock_data_store, mock_getenv):
+    # Execute
+    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+    result = game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
+                                        language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
+                                        game_id=game_id, file_format=TestConstants.FORMAT,
+                                        api_key=TestConstants.API_KEY)
+    assert result.status_code == 200
