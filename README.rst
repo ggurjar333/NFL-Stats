@@ -21,7 +21,17 @@ NFL-Stats acquires data from an external service - Sports Radar. The data integr
 
 Dependencies
 -----------------------------
-To discover the various Python packages used in this project, you are advised to refer to the requirements.txt file found in the project's root directory.
+To discover the various Python packages used in this project, you are advised to refer to the `requirements.txt` file found in the project's root directory.
+
+Features Release
+-----------------
+This project continues to expand and improve by implementing new features to enhance data analysis. Included in the latest release are the following updates:
+
+* Latest Feature: This feature addresses specific needs and benefits.
+* Recent Update: This update was designed to facilitate these benefits.
+* Improved Feature: This feature has undergone enhancements for delivering more accurate results.
+
+To take advantage of the new features, ensure the project is updated to the latest release.
 
 Contribution
 ------------
