@@ -1,3 +1,5 @@
+import os
+
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
@@ -14,6 +16,19 @@ class GameFeeds():
         :type base_url: str
         """
         self.base_url = base_url
+
+    def get_game_boxscore(self, access_level, version, language_code, game_id, file_format):
+        """
+        Get the game boxscore for a given game_id
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param game_id:
+        :param file_format:
+        :return: The game boxscore for the given game_id
+        """
+        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        return datastore.fetch_data(url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/boxscore.{file_format}?api_key={os.environ.get('NFL_API_KEY')}")
 
     def get_weekly_schedule(self, season_year, season_type, week_number):
         """
