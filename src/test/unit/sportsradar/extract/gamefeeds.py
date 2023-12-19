@@ -1,7 +1,7 @@
 from unittest.mock import patch, Mock
 from dotenv import load_dotenv
 import os
-
+from datetime import datetime
 from src.sportsradar.extract.gamefeeds import GameFeeds
 from src.sportsradar.workspace.datastore import DataStore
 
@@ -88,4 +88,20 @@ def test_game_feeds_with_season_schedule(mock_data_store, mock_getenv):
                                            api_key = TestConstants.API_KEY
                                         )
 
+    assert result.status_code == 200
+
+
+@patch('os.getenv', return_value=TestConstants.API_KEY)
+@patch('src.sportsradar.extract.gamesfeeds.GameFeeds')
+def test_game_feeds_with_weekly_schedule(mock_data_store, mock_getenv):
+    #Execute
+    year = 2022
+    season_type = 'REG'
+    week_number = datetime.now().isocalendar()[1] -7
+    result= game_feeds.current_week(access_level = TestConstants.ACCESS_LEVEL,
+                                    language_code=TestConstants.LANGUAGE_CODE,  version=TestConstants.VERSION,
+                                    year=year, season_type=season_type, week_number=week_number,
+                                    file_format=TestConstants.FORMAT,
+                                    api_key = TestConstants.API_KEY
+                                    )
     assert result.status_code == 200
