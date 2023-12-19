@@ -113,10 +113,12 @@ class GameFeeds():
         """
         if not api_key:
             logger.error("API key not found in environment variables.")
-            raise ValueError("API key not founf in environment variables")
+            raise ValueError("API key not found in environment variables")
         datastore = DataStore(datakeeper=SportsRadarFetcher())
         result = datastore.fetch_data(
             url = f"{self.base_url}/{access_level}/{version}/{language_code}/games/current_week/schedule{file_format}?api_key={api_key}"
         )
         logger.info('Data retrieved successfully')
         return result
+
+    
