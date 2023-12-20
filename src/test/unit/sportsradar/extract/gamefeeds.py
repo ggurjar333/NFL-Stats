@@ -40,6 +40,36 @@ class TestGameFeeds(unittest.TestCase):
                       )
         assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
 
+    def test_get_game_roster(self):
+        result = self.game_feeds.get_game_roster(access_level=TestConstants.ACCESS_LEVEL,
+                                                 language_code=TestConstants.LANGUAGE_CODE,
+                                                 version=TestConstants.VERSION,
+                                                 game_id=self.game_id,
+                                                 file_format=TestConstants.FORMAT,
+                                                 api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_roster_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_game_statistics(self):
+        result = self.game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
+                                                     language_code=TestConstants.LANGUAGE_CODE,
+                                                     version=TestConstants.VERSION,
+                                                     game_id=self.game_id,
+                                                     file_format=TestConstants.FORMAT,
+                                                     api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_statistics_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
+
 
 if __name__ == '__main__':
     unittest.main(argv=[''], defaultTest='TestGameFeeds')

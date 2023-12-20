@@ -79,7 +79,6 @@ class DataStore:
             response = self.fetcher.fetch_data(url)
             if response.status_code == requests.codes.ok:
                 self.data.update({url: response.json()})
-                print(url)
                 return response
         except requests.exceptions.RequestException as e:
             logger.error(f"Error fetching URL {url}: {str(e)}")
