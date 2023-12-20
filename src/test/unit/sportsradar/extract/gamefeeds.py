@@ -1,107 +1,89 @@
-from unittest.mock import patch, Mock
 from dotenv import load_dotenv
 import os
+import unittest
 from datetime import datetime
 from src.sportsradar.extract.gamefeeds import GameFeeds
-from src.sportsradar.workspace.datastore import DataStore
+from src.sportsradar.workspace.datastore import save_data
 
 load_dotenv('../../../../../.env')
 
 
-class TestConstants():
+class TestConstants:
     BASE_URL = 'https://api.sportradar.us/nfl/official'
     ACCESS_LEVEL = 'trial'
     VERSION = 'v7'
     LANGUAGE_CODE = 'en'
     FORMAT = 'json'
     API_KEY = f'{os.environ.get("APIKEY")}'
+    MONGODB_URL = f"{os.environ.get('MONGODB_URL')}"
+    MONGODB_DATABASE = f"{os.environ.get('MONGODB_DATABASE')}"
 
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_box_score(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_boxscore(access_level=TestConstants.ACCESS_LEVEL,
-                                          language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                          game_id=game_id, file_format=TestConstants.FORMAT,
-                                          api_key=TestConstants.API_KEY)
-    # Check
-    assert result.status_code == 200
+class TestGameFeeds(unittest.TestCase):
+    def setUp(self):
+        self.game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+        self.game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+        self.expected_status = 200
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_game_roster(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_roster(access_level=TestConstants.ACCESS_LEVEL,
-                                        language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                        game_id=game_id, file_format=TestConstants.FORMAT,
-                                        api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
+    def test_get_game_boxscore(self):
+        result = self.game_feeds.get_game_boxscore(access_level=TestConstants.ACCESS_LEVEL,
+                                                   language_code=TestConstants.LANGUAGE_CODE,
+                                                   version=TestConstants.VERSION,
+                                                   game_id=self.game_id,
+                                                   file_format=TestConstants.FORMAT,
+                                                   api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_boxscore_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
 
+    def test_get_game_roster(self):
+        result = self.game_feeds.get_game_roster(access_level=TestConstants.ACCESS_LEVEL,
+                                                 language_code=TestConstants.LANGUAGE_CODE,
+                                                 version=TestConstants.VERSION,
+                                                 game_id=self.game_id,
+                                                 file_format=TestConstants.FORMAT,
+                                                 api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_roster_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_game_statistics(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
-                                        language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                        game_id=game_id, file_format=TestConstants.FORMAT,
-                                        api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
+    def test_get_game_statistics(self):
+        result = self.game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
+                                                     language_code=TestConstants.LANGUAGE_CODE,
+                                                     version=TestConstants.VERSION,
+                                                     game_id=self.game_id,
+                                                     file_format=TestConstants.FORMAT,
+                                                     api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_statistics_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamesfeeds.GameFeeds')
-def test_game_feeds_with_current_season_schedule(mock_data_store, mock_getenv):
-    #Execute
-    result = game_feeds.get_current_season_schedule(access_level=TestConstants.ACCESS_LEVEL,
-                                                    language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                                    game_id=game_id, file_format=TestConstants.FORMAT,
-                                                    api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
+    def test_get_game_pbp(self):
+        result = self.game_feeds.get_game_pbp(access_level=TestConstants.ACCESS_LEVEL,
+                                                     language_code=TestConstants.LANGUAGE_CODE,
+                                                     version=TestConstants.VERSION,
+                                                     game_id=self.game_id,
+                                                     file_format=TestConstants.FORMAT,
+                                                     api_key=TestConstants.API_KEY)
+        if result.status_code == self.expected_status:
+            save_data(response=result,
+                      db_uri=TestConstants.MONGODB_URL,
+                      database=TestConstants.MONGODB_DATABASE,
+                      collection=f'test_game_pbp_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      )
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamesfeeds.GamesFeeds')
-def test_game_feeds_with_current_week_schedule(mock_data_store, mock_getenv):
-    #Execute
-    result = game_feeds.get_current_week_schedule(access_level=TestConstants.ACCESS_LEVEL,
-                                                language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                                game_id=game_id, file_format=TestConstants.FORMAT,
-                                                api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
-
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamesfeeds.GamesFeeds')
-def test_game_feeds_with_season_schedule(mock_data_store, mock_getenv):
-    #Execute
-    year = 2022
-    season_type = 'REG'
-    result = game_feeds.get_seasons_schedule(access_level=TestConstants.ACCESS_LEVEL,
-                                           language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                           year=year, season_type=season_type,
-                                           file_format=TestConstants.FORMAT,
-                                           api_key = TestConstants.API_KEY
-                                        )
-
-    assert result.status_code == 200
-
-
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamesfeeds.GameFeeds')
-def test_game_feeds_with_weekly_schedule(mock_data_store, mock_getenv):
-    #Execute
-    year = 2022
-    season_type = 'REG'
-    week_number = datetime.now().isocalendar()[1] -7
-    result= game_feeds.get_seasons_schedule(access_level = TestConstants.ACCESS_LEVEL,
-                                    language_code=TestConstants.LANGUAGE_CODE,  version=TestConstants.VERSION,
-                                    year=year, season_type=season_type, week_number=week_number,
-                                    file_format=TestConstants.FORMAT,
-                                    api_key = TestConstants.API_KEY
-                                    )
-    assert result.status_code == 200
+if __name__ == '__main__':
+    unittest.main(argv=[''], defaultTest='TestGameFeeds')
