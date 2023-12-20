@@ -22,20 +22,24 @@ class TestConstants:
 class TestAdditionalFeeds(unittest.TestCase):
     def setUp(self):
         self.additionalfeeds = AdditionalFeeds(base_url=TestConstants.BASE_URL)
-        self.player_id = '16423bd0-6239-454c-9ec8-f90477de17b1'
+        self.year = datetime.now().year # 2023
+        self.nfl_season = 'PST'	 # Preseason (PRE), Regular Season (REG), or Post-Season (PST).
+        self.nfl_season_week = 10	# The number of weeks into the season in 2 digit format (WW).
         self.expected_status = 200
 
-    def test_get_player_profile(self):
-        result = self.player_feeds.get_player_profile(access_level=TestConstants.ACCESS_LEVEL,
+    def test_get_weekly_depth_charts(self):
+        result = self.additionalfeeds.get_weekly_depth_charts(access_level=TestConstants.ACCESS_LEVEL,
                                                       language_code=TestConstants.LANGUAGE_CODE,
                                                       version=TestConstants.VERSION,
-                                                      player_id=self.player_id,
+                                                      year=self.year,
+                                                      nfl_season=self.nfl_season,
+                                                      nfl_season_week=self.nfl_season_week,
                                                       file_format=TestConstants.FORMAT,
                                                       api_key=TestConstants.API_KEY)
         if result.status_code == self.expected_status:
             save_data(response=result,
                       db_uri=TestConstants.MONGODB_URL,
                       database=TestConstants.MONGODB_DATABASE,
-                      collection=f'test_player_profile_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                      collection=f'test_get_weekly_depth_charts_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
                       )
         assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
