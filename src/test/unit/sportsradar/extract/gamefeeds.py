@@ -1,7 +1,5 @@
-from unittest.mock import patch, Mock
 from dotenv import load_dotenv
 import os
-
 from src.sportsradar.extract.gamefeeds import GameFeeds
 from src.sportsradar.workspace.datastore import DataStore
 
@@ -17,43 +15,45 @@ class TestConstants():
     API_KEY = f'{os.environ.get("APIKEY")}'
 
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_box_score(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_boxscore(access_level=TestConstants.ACCESS_LEVEL,
-                                          language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                          game_id=game_id, file_format=TestConstants.FORMAT,
-                                          api_key=TestConstants.API_KEY)
-    # Check
-    assert result.status_code == 200
-    if result.status_code == 200:
-        data_store = DataStore()
-        data_json = data_store.save_data(response=result.json(), collection='game_boxscore')
-
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_game_roster(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_roster(access_level=TestConstants.ACCESS_LEVEL,
-                                        language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                        game_id=game_id, file_format=TestConstants.FORMAT,
-                                        api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
+import unittest
 
 
-@patch('os.getenv', return_value=TestConstants.API_KEY)
-@patch('src.sportsradar.extract.gamefeeds.GameFeeds')
-def test_game_feeds_with_game_statistics(mock_data_store, mock_getenv):
-    # Execute
-    game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
-    game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
-    result = game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
-                                        language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
-                                        game_id=game_id, file_format=TestConstants.FORMAT,
-                                        api_key=TestConstants.API_KEY)
-    assert result.status_code == 200
+class TestGameFeeds(unittest.TestCase):
+    def setUp(self):
+        self.game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+        self.game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+        self.expected_status = 200
+
+    def test_get_game_boxscore(self):
+        result = self.game_feeds.get_game_boxscore(access_level=TestConstants.ACCESS_LEVEL,
+                                                   language_code=TestConstants.LANGUAGE_CODE,
+                                                   version=TestConstants.VERSION,
+                                                   game_id=self.game_id,
+                                                   file_format=TestConstants.FORMAT,
+                                                   api_key=TestConstants.API_KEY)
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_game_roster(self):
+        # Execute
+        game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+        game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+        result = game_feeds.get_game_roster(access_level=TestConstants.ACCESS_LEVEL,
+                                            language_code=TestConstants.LANGUAGE_CODE, version=TestConstants.VERSION,
+                                            game_id=game_id, file_format=TestConstants.FORMAT,
+                                            api_key=TestConstants.API_KEY)
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_game_statistics(self):
+        # Execute
+        game_feeds = GameFeeds(base_url=TestConstants.BASE_URL)
+        game_id = '251ac0cf-d97d-4fe8-a39e-09fc4a95a0b2'
+        result = game_feeds.get_game_statistics(access_level=TestConstants.ACCESS_LEVEL,
+                                                language_code=TestConstants.LANGUAGE_CODE,
+                                                version=TestConstants.VERSION,
+                                                game_id=game_id, file_format=TestConstants.FORMAT,
+                                                api_key=TestConstants.API_KEY)
+        assert result.status_code == self.expected_status, f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -45,6 +45,12 @@ class SportsRadarFetcher:
         return self._fetch_from_url(url)
 
 
+def save_data(response, collection):
+    mongo_client = MongoClient(host=os.environ.get("MONGODB_URL"), server_api=ServerApi('1'))
+    db = mongo_client[os.environ.get("MONGODB_DATABASE")]
+    db[collection].insert_many(response.json())
+
+
 class DataStore:
     """
     This class used to fetch data.
@@ -55,16 +61,6 @@ class DataStore:
 
     def __init__(self, datakeeper):
         self.datakeeper = datakeeper
-        self.mongo_client = MongoClient(host=os.environ.get("MONGODB_URL"), server_api=ServerApi('1'))
-        self.db = self.mongo_client[os.environ.get("MONGODB_DATABASE")]
 
     def fetch_data(self, url):
         return self.datakeeper.fetch_data(url)
-
-    def save_data(self, response, collection):
-        self.db[collection].insert_many(response.json())
-
-
-
-
-
