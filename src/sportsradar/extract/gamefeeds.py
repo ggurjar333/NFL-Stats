@@ -33,7 +33,7 @@ class GameFeeds():
         if not api_key:
             logger.error('API key not found in environment variables.')
             raise ValueError('API key not found in environment variables')
-        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
             url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/boxscore.{file_format}?api_key={api_key}")
         logger.info('Data retrieved successfully.')
@@ -52,7 +52,7 @@ class GameFeeds():
         if not api_key:
             logger.error('API key not found in environment variables.')
             raise ValueError('API key not found in environment variables')
-        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
             url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/roster.{file_format}?api_key={api_key}"
         )
@@ -72,7 +72,7 @@ class GameFeeds():
         if not api_key:
             logger.error('API key not found in environment variables.')
             raise ValueError('API key not found in environment variables')
-        datastore = DataStore(datakeeper=SportsRadarFetcher())
+        datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
             url=f"{self.base_url}/{access_level}/{version}/{language_code}/games/{game_id}/statistics.{file_format}?api_key={api_key}"
         )
