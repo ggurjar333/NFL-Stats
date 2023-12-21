@@ -23,6 +23,8 @@ class TestAdditionalFeeds(unittest.TestCase):
     def setUp(self):
         self.additionalfeeds = AdditionalFeeds(base_url=TestConstants.BASE_URL)
         self.year = datetime.now().year - 6  # 2023
+        self.month =datetime.now().month -9
+        self.day =datetime.now().day -3
         self.nfl_season = (
             "PST"  # Preseason (PRE), Regular Season (REG), or Post-Season (PST).
         )
@@ -52,3 +54,48 @@ class TestAdditionalFeeds(unittest.TestCase):
         assert (
             result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_daily_change_log(self):
+        result  =self.additionalfeeds.get_daily_change_log(
+                            access_level =TestConstants.ACCESS_LEVEL,
+                            language_code=TestConstants.LANGUAGE_CODE,
+                            version=TestConstants.VERSION,
+                            year=self.year,
+                            month=self.month,
+                            day=self.day,
+                            file_format=TestConstants.FORMAT,
+                            api_key=TestConstants.API_KEY
+                    )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_DATABASE,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_daily_change_log_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+    
+    def test_get_daily_transactions(self):
+        result  =self.additionalfeeds.get_daily_change_log(
+                            access_level =TestConstants.ACCESS_LEVEL,
+                            language_code=TestConstants.LANGUAGE_CODE,
+                            version=TestConstants.VERSION,
+                            year=self.year,
+                            month=self.month,
+                            day=self.day,
+                            file_format=TestConstants.FORMAT,
+                            api_key=TestConstants.API_KEY
+                    )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_DATABASE,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_daily_transactions_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+    

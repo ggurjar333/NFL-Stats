@@ -50,3 +50,48 @@ class AdditionalFeeds:
         )
         logger.info("Data retrieved successfully.")
         return result
+
+
+    def get_daily_change_log(self):
+
+        """
+        :param: access_level:
+        :param: version:
+        :param: language_code:
+        :param: year:
+        :month: month:
+        :param day:
+        :param format:
+        :param api_key:
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/changes.{format}?api_key={api_key}"
+        )
+        logger.info("Data Retrieved successfully.")
+        return result 
+    
+    def get_daily_transactions(self):
+       """
+        :param: access_level:
+        :param: version:
+        :param: language_code:
+        :param: year:
+        :month: month:
+        :param day:
+        :param format:
+        :param api_key:
+        """
+    if not api_key:
+        logger.error("API key not found in environment variables")
+        raise ValueError("API key not found in environemt variables")
+    datastore = DataStore(SportsRadarFetcher())
+    result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/transactions.{format}?api_key={api_key}"
+        )
+    logger.info("Data Retrieved successfully.")
+    return result 
+    
