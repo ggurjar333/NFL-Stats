@@ -3,13 +3,14 @@ from dotenv import load_dotenv
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
-load_dotenv('../../../.env')
+load_dotenv("../../../.env")
 
 logger = logging_helpers.get_logger(__name__)
 
 
-class TeamFeeds():
+class TeamFeeds:
     """This class is responsible for extracting team feeds from SportRadar."""
+
     def __init__(self, base_url):
         """
         Initialize an instance of the class.
@@ -18,7 +19,9 @@ class TeamFeeds():
         """
         self.base_url = base_url
 
-    def get_team_roster(self, access_level, version, language_code, team_id, file_format, api_key):
+    def get_team_roster(
+        self, access_level, version, language_code, team_id, file_format, api_key
+    ):
         """
         Get the team roster for a given team_id
         :param access_level:
@@ -30,10 +33,11 @@ class TeamFeeds():
         :return: The team roster for the given team_id
         """
         if not api_key:
-            logger.error('API key not found in environment variables.')
-            raise ValueError('API key not found in environment variables')
+            logger.error("API key not found in environment variables.")
+            raise ValueError("API key not found in environment variables")
         datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
-            url=f"{self.base_url}/{access_level}/{version}/{language_code}/teams/{team_id}/full_roster.{file_format}?api_key={api_key}")
-        logger.info('Data retrieved successfully.')
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/teams/{team_id}/full_roster.{file_format}?api_key={api_key}"
+        )
+        logger.info("Data retrieved successfully.")
         return result

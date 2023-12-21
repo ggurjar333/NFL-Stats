@@ -19,10 +19,21 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        pip install flake8
         flake8 . --max-line-length=127
+
+    - name: Fixing linting errors
+      run: |
+        black .
+
+    - name: Environment Variables
+      env:
+        MONGODB_DATABASE: ''
+        MONGODB_URL: ''
+        APIKEY: 'pakq6p7erz3ypybv7gs423ga'
+      #        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+#        MONGODB_URL: ${{ secrets.MONGODB_URL }}
+#        APIKEY: ${{ secrets.APIKEY }}
 
     - name: Test with pytest
       run: |
-        pip install pytest
         pytest
