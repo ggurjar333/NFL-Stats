@@ -29,7 +29,7 @@ jobs:
       env:
         MONGODB_DATABASE: ''
         MONGODB_URL: ''
-        APIKEY: 'pakq6p7erz3ypybv7gs423ga'
+        APIKEY: ''
       #        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
 #        MONGODB_URL: ${{ secrets.MONGODB_URL }}
 #        APIKEY: ${{ secrets.APIKEY }}
