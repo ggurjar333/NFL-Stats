@@ -1,15 +1,15 @@
-import os
 from dotenv import load_dotenv
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
-load_dotenv('../../../.env')
+load_dotenv("../../../.env")
 
 logger = logging_helpers.get_logger(__name__)
 
 
-class AdditionalFeeds():
+class AdditionalFeeds:
     """This class is responsible for extracting additional feeds from SportRadar."""
+
     def __init__(self, base_url):
         """
         Initialize an instance of the class.
@@ -18,7 +18,17 @@ class AdditionalFeeds():
         """
         self.base_url = base_url
 
-    def get_weekly_depth_charts(self, access_level, version, language_code, year, nfl_season, nfl_season_week, file_format, api_key):
+    def get_weekly_depth_charts(
+        self,
+        access_level,
+        version,
+        language_code,
+        year,
+        nfl_season,
+        nfl_season_week,
+        file_format,
+        api_key,
+    ):
         """
         Get the depth_charts for a given team_id
         :param access_level:
@@ -32,10 +42,11 @@ class AdditionalFeeds():
         :return: The weeekly depth charts for the given year, nfl_season, nfl_season_week
         """
         if not api_key:
-            logger.error('API key not found in environment variables.')
-            raise ValueError('API key not found in environment variables')
+            logger.error("API key not found in environment variables.")
+            raise ValueError("API key not found in environment variables")
         datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
-            url=f"{self.base_url}/{access_level}/{version}/{language_code}/seasons/{year}/{nfl_season}/{nfl_season_week}/depth_charts.{file_format}?api_key={api_key}")
-        logger.info('Data retrieved successfully.')
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/seasons/{year}/{nfl_season}/{nfl_season_week}/depth_charts.{file_format}?api_key={api_key}"
+        )
+        logger.info("Data retrieved successfully.")
         return result
