@@ -42,5 +42,9 @@ class TestPlayerFeeds(unittest.TestCase):
                 collection=f'test_player_profile_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
             )
         assert (
-            result.status_code == self.expected_status
+                result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+
+if __name__ == "__main__":
+    unittest.main(argv=[""], defaultTest="TestPlayerFeeds")

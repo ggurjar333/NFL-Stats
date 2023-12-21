@@ -44,3 +44,7 @@ class TestTeamFeeds(unittest.TestCase):
         assert (
             result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+
+if __name__ == "__main__":
+    unittest.main(argv=[""], defaultTest="TestTeamFeeds")
