@@ -16,7 +16,7 @@ class TestConstants:
     FORMAT = 'json'
     API_KEY = f'{os.environ.get("APIKEY")}'
     MONGODB_URL = f"{os.environ.get('MONGODB_URL')}"
-    MONGODB_DATABASE = f"{os.environ.get('MONGO_DATABASE')}"
+    MONGODB_DATABASE = f"{os.environ.get('MONGODB_DATABASE')}"
 
 
 class TestPrimaryFeeds(unittest.TestCase):
@@ -74,7 +74,7 @@ class TestPrimaryFeeds(unittest.TestCase):
                     save_data(response=result,
                               db_uri=TestConstants.MONGODB_URL,
                               database=TestConstants.MONGODB_DATABASE,
-                              collection=f'test_season_schedule_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                              collection=f'test_season_schedule_{year_}_{season}_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
                               )
 
     def test_get_week_schedule(self):
