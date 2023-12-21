@@ -6,22 +6,23 @@ from requests.adapters import HTTPAdapter
 import requests
 from src.sportsradar import logging_helpers
 import os
-from dotenv import load_dotenv
 
 logger = logging_helpers.get_logger(__name__)
 
-load_dotenv('../../../../../.env')
+# load_dotenv("../../../../../.env")
 
 
 def create_mongo_client():
-    mongo_url = os.getenv('MONGODB_URL')
+    mongo_url = os.getenv("MONGODB_URL")
     if mongo_url is None:
         raise ValueError("MongoDB environment variable for URL not set.")
-    return MongoClient(host=mongo_url, server_api=ServerApi('1'), port=27017)
+    return MongoClient(host=mongo_url, server_api=ServerApi("1"), port=27017)
 
 
 def setup_http_session():
-    retries = Retry(total=3, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
+    retries = Retry(
+        total=3, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504]
+    )
     adapter = HTTPAdapter(max_retries=retries)
     session = requests.Session()
     session.mount("http://", adapter)
@@ -30,7 +31,7 @@ def setup_http_session():
 
 
 def save_data(response, db_uri, database, collection):
-    mongo_client = MongoClient(host=db_uri, server_api=ServerApi('1'), port=27017)
+    mongo_client = MongoClient(host=db_uri, server_api=ServerApi("1"), port=27017)
     if database is None:
         raise ValueError("MongoDB environment variable not set.")
     else:
@@ -44,7 +45,7 @@ class SportsRadarFetcher:
         self.timeout = timeout
         self.http = setup_http_session()
         self.mongo_client = create_mongo_client()
-        self.mongo_db = os.getenv('MONGODB_DATABASE')
+        self.mongo_db = os.getenv("MONGODB_DATABASE")
         if self.mongo_db is None:
             raise ValueError("MongoDB environment variable for Database not set.")
 
