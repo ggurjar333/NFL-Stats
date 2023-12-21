@@ -6,7 +6,6 @@ from requests.adapters import HTTPAdapter
 import requests
 from src.sportsradar import logging_helpers
 import os
-from dotenv import load_dotenv
 
 logger = logging_helpers.get_logger(__name__)
 

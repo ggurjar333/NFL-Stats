@@ -5,7 +5,7 @@ from datetime import datetime
 from src.sportsradar.extract.playerfeeds import PlayerFeeds
 from src.sportsradar.workspace.datastore import save_data
 
-load_dotenv("../../../../../.env")
+load_dotenv("../../../.env")
 
 
 class TestConstants:
@@ -42,7 +42,7 @@ class TestPlayerFeeds(unittest.TestCase):
                 collection=f'test_player_profile_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
             )
         assert (
-                result.status_code == self.expected_status
+            result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
 
 

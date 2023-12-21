@@ -5,7 +5,7 @@ from datetime import datetime
 from src.sportsradar.extract.gamefeeds import GameFeeds
 from src.sportsradar.workspace.datastore import save_data
 
-load_dotenv("../../../../../.env")
+load_dotenv("../../../.env")
 
 
 class TestConstants:

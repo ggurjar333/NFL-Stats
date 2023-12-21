@@ -1,4 +1,3 @@
-import os
 from dotenv import load_dotenv
 from src.sportsradar import logging_helpers
 from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
