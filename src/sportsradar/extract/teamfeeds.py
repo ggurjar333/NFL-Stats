@@ -40,3 +40,36 @@ class TeamFeeds:
         )
         logger.info("Data retrieved successfully.")
         return result
+
+    def get_seasonal_statistics(
+        self,
+        access_level,
+        version,
+        language_code,
+        year,
+        nfl_season,
+        team_id,
+        file_format,
+        api_key,
+    ):
+        """
+        Get the team roster for a given year, nfl_season, and team_id
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param year:
+        :param nfl_season:
+        :param team_id:
+        :param file_format:
+        :param api_key:
+        :return: The seasonsal statistics feed of the given team_id, nfl_season, and year
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables.")
+            raise ValueError("API key not found in environment variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/seasons/{year}/{nfl_season}/teams/{team_id}/statistics.{file_format}?api_key={api_key}"
+        )
+        logger.info("Data retrieved successfully.")
+        return result
