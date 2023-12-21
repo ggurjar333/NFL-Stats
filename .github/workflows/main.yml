@@ -2,6 +2,11 @@ name: CI
 on: [push, pull_request]
 jobs:
   build:
+    env:
+      MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+      MONGODB_URL: ${{ secrets.MONGODB_URL }}
+      APIKEY: ${{ secrets.APIKEY }}
+
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -24,15 +29,6 @@ jobs:
     - name: Fixing linting errors
       run: |
         black .
-
-    - name: Environment Variables
-      env:
-        MONGODB_DATABASE: ''
-        MONGODB_URL: ''
-        APIKEY: ''
-      #        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
-#        MONGODB_URL: ${{ secrets.MONGODB_URL }}
-#        APIKEY: ${{ secrets.APIKEY }}
 
     - name: Test with pytest
       run: |
