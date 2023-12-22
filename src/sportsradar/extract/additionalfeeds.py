@@ -10,13 +10,14 @@ logger = logging_helpers.get_logger(__name__)
 class AdditionalFeeds:
     """This class is responsible for extracting additional feeds from SportRadar."""
 
-    def __init__(self, base_url):
+    def __init__(self, base_url, base_url_2):
         """
         Initialize an instance of the class.
         :param base_url: The base URL for the API.
         :type base_url: str
         """
         self.base_url = base_url
+        self.base_url_2 = base_url_2
 
     def get_weekly_depth_charts(
         self,
@@ -52,7 +53,7 @@ class AdditionalFeeds:
         return result
 
 
-    def get_daily_change_log(self):
+    def get_daily_change_log(self, access_level, version, language_code, year, month, day, file_format, api_key):
 
         """
         :param: access_level:
@@ -69,29 +70,115 @@ class AdditionalFeeds:
             raise ValueError("API key not found in environemt variables")
         datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
-            url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/changes.{format}?api_key={api_key}"
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/changes.{file_format}?api_key={api_key}"
         )
         logger.info("Data Retrieved successfully.")
         return result 
     
-    def get_daily_transactions(self):
-       """
-        :param: access_level:
-        :param: version:
-        :param: language_code:
-        :param: year:
-        :month: month:
-        :param day:
-        :param format:
-        :param api_key:
+    def get_daily_transactions(self, access_level, version, language_code, year, month, day, file_format, api_key):
         """
-    if not api_key:
-        logger.error("API key not found in environment variables")
-        raise ValueError("API key not found in environemt variables")
-    datastore = DataStore(SportsRadarFetcher())
-    result = datastore.fetch_data(
-            url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/transactions.{format}?api_key={api_key}"
-        )
-    logger.info("Data Retrieved successfully.")
-    return result 
+            :param: access_level:
+            :param: version:
+            :param: language_code:
+            :param: year:
+            :month: month:
+            :param day:
+            :param format:
+            :param api_key:
+            """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+                url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/{year}/{month}/{day}/transactions.{file_format}?api_key={api_key}"
+            )
+        logger.info("Data Retrieved successfully.")
+        return result 
+    
+    def get_league_hierarchy(self, access_level, version, language_code, file_format, api_key):
+        """
+            Get the league_hierarchy
+            :param: access_level:
+            :param: version:
+            :param: language_code:
+            :param format:
+            :param api_key:
+
+            return: The league hierarchy
+            """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+                url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/hierarchy.{file_format}?api_key={api_key}"
+            )
+        logger.info("Data Retrieved successfully.")
+        return result 
+    
+    def get_postgame_standings(self, access_level, version, language_code, year, nfl_season, file_format, api_key ):
+        """
+        Get the postgame standings for a given year
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param year: Year in 4 digit format (YYYY).
+        :param nfl_season:	Preseason (PRE), Regular Season (REG), or Post-Season (PST).
+        :param file_format:
+        :param api_key:
+        :return: The postgame standings  for the given year, nfl_season
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+                url=f"{self.base_url}/{access_level}/{version}/{language_code}/seasons/{year}/{nfl_season}/standings/season.{file_format}?api_key={api_key}"
+            )
+        logger.info("Data Retrieved successfully.")
+        return result
+    
+    def get_prospects(self, access_level, version, language_code,year,file_format, api_key):
+        """
+        Get the prospects for a given year
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param year: Year in 4 digit format (YYYY).
+        :param file_format:
+        :param api_key:
+        :return: The prospects for the given year
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+                url=f"{self.base_url_2}/{access_level}/{version}/{language_code}/{year}/prospects.{file_format}?api_key={api_key}"
+            )
+        logger.info("Data Retrieved successfully.")
+        return result
+    
+
+    def get_seasons(self, access_level, version, language_code, file_format, api_key):
+        """
+        Get the seasons for a given team_id
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param file_format:
+        :param api_key:
+        :return: The seasons data
+        """
+        if not api_key:
+            logger.error("API key not found in environment variables")
+            raise ValueError("API key not found in environemt variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+                url=f"{self.base_url}/{access_level}/{version}/{language_code}/league/seasons.{file_format}?api_key={api_key}"
+            )
+        logger.info("Data Retrieved successfully.")
+        return result
+
     
