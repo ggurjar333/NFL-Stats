@@ -1,0 +1,42 @@
+from dotenv import load_dotenv
+from src.sportradar import logging_helpers
+from src.sportradar.workspace.datastore import DataStore, SportsRadarFetcher
+
+load_dotenv("../../../.env")
+
+logger = logging_helpers.get_logger(__name__)
+
+
+class DraftsFeeds:
+    """This class is reponsible for extraction of draft feeds from SportRadar."""
+
+    def __init__(self, base_url):
+        """
+        Initialize an instance of the class.
+        :param base_url: The base URL for the API.
+        :type base_url: str
+        """
+        self.base_url = base_url
+
+    def get_draft_summary(
+        self, access_level, version, language_code, year, file_format, api_key
+    ):
+        """
+        Get the depth_charts for a given team_id
+        :param access_level:
+        :param version:
+        :param language_code:
+        :param year: Year in 4 digit format (YYYY).
+        :param file_format:
+        :param api_key:
+        :return: The draft_summary for the given year
+        """
+        if not api_key:
+            logger.error("API key not found in environemnt variables.")
+            raise ValueError("API key not found in environment variables")
+        datastore = DataStore(SportsRadarFetcher())
+        result = datastore.fetch_data(
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/{year}/draft.{file_format}?api_key={api_key} "
+        )
+        logger.info("Data retrieved successfully")
+        return result
