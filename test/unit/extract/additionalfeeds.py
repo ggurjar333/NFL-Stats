@@ -159,6 +159,29 @@ class TestAdditionalFeeds(unittest.TestCase):
             result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
 
+    def test_get_weekly_seasons(self):
+        result = self.additionalfeeds.get_weekly_injuries(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION,
+            year=self.year,
+            nfl_season=self.nfl_season,
+            nfl_season_week=self.nfl_season_week,
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_weekly_injuries {datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
 
 if __name__ == "__main__":
     unittest.main(argv=[""], defaultTest="TestAdditionalFeeds")
