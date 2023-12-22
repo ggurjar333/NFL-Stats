@@ -10,8 +10,9 @@ load_dotenv("../../../.env")
 
 class TestConstants:
     BASE_URL = "https://api.sportradar.us/nfl/official"
+    BASE_URL_2 = "http://api.sportradar.us/draft/nfl"
     ACCESS_LEVEL = "trial"
-    VERSION = "v7"
+    VERSION = ["v7", "v1"]
     LANGUAGE_CODE = "en"
     FORMAT = "json"
     API_KEY = f'{os.environ.get("APIKEY")}'
@@ -21,8 +22,12 @@ class TestConstants:
 
 class TestAdditionalFeeds(unittest.TestCase):
     def setUp(self):
-        self.additionalfeeds = AdditionalFeeds(base_url=TestConstants.BASE_URL)
+        self.additionalfeeds = AdditionalFeeds(
+            base_url=TestConstants.BASE_URL, base_url_2=TestConstants.BASE_URL_2
+        )
         self.year = datetime.now().year - 6  # 2023
+        self.month = datetime.now().month - 1
+        self.day = datetime.now().day - 15
         self.nfl_season = (
             "PST"  # Preseason (PRE), Regular Season (REG), or Post-Season (PST).
         )
@@ -35,7 +40,7 @@ class TestAdditionalFeeds(unittest.TestCase):
         result = self.additionalfeeds.get_weekly_depth_charts(
             access_level=TestConstants.ACCESS_LEVEL,
             language_code=TestConstants.LANGUAGE_CODE,
-            version=TestConstants.VERSION,
+            version=TestConstants.VERSION[0],
             year=self.year,
             nfl_season=self.nfl_season,
             nfl_season_week=self.nfl_season_week,
@@ -52,3 +57,132 @@ class TestAdditionalFeeds(unittest.TestCase):
         assert (
             result.status_code == self.expected_status
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_daily_change_log(self):
+        result = self.additionalfeeds.get_daily_change_log(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[0],
+            year=self.year,
+            month=self.month,
+            day=self.day,
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_daily_change_log_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_daily_transactions(self):
+        result = self.additionalfeeds.get_daily_transactions(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[0],
+            year=self.year,
+            month=self.month,
+            day=self.day,
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_daily_transactions_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_league_hierarchy(self):
+        result = self.additionalfeeds.get_league_hierarchy(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[0],
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_league_hierarchy_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_postgame_standings(self):
+        result = self.additionalfeeds.get_postgame_standings(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[0],
+            year=self.year,
+            nfl_season=self.nfl_season,
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_postgame_standings_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_prospects(self):
+        result = self.additionalfeeds.get_prospects(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[-1],
+            year=self.year + 6,
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_prospects {datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_seasons(self):
+        result = self.additionalfeeds.get_seasons(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION[0],
+            file_format=TestConstants.FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_seasons {datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+
+if __name__ == "__main__":
+    unittest.main(argv=[""], defaultTest="TestAdditionalFeeds")
