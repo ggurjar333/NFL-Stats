@@ -2,27 +2,28 @@ from dotenv import load_dotenv
 import os
 import unittest
 from datetime import datetime
-from src.sportradar.extract.draftfeeds import DraftsFeeds
+from src.sportsradar.extract.draftfeeds import DraftsFeeds
 from src.sportsradar.workspace.datastore import save_data
 
 load_dotenv("../../../.env")
 
 
 class TestConstants:
-    BASE_URL = "https://api.sportradar.us/draft/nfl/"
+    BASE_URL = "https://api.sportradar.us/draft/nfl"
     ACCESS_LEVEL = "trial"
     VERSION = "v1"
     LANGUAGE_CODE = "en"
-    FORMAT = "json"
-    API_KEY = f'{os.environ.get("APIKEY ")}'
+    FILE_FORMAT = "json"
+    API_KEY = f'{os.environ.get("APIKEY")}'
     MONGODB_URL = f'{os.environ.get("MONGODB_URL")}'
     MONGODB_DATABASE = f'{os.environ.get("MONGODB_DATABASE")}'
 
 
 class TestDraftFeeds(unittest.TestCase):
     def setUp(self):
-        self.draftfeeds = DraftsFeeds(base_ur=TestConstants.BASE_URL)
+        self.draftfeeds = DraftsFeeds(base_url=TestConstants.BASE_URL)
         self.year = datetime.now().year - 2
+        self.expected_status = 200
 
     def test_get_draft_summary(self):
         result = self.draftfeeds.get_draft_summary(
@@ -30,7 +31,7 @@ class TestDraftFeeds(unittest.TestCase):
             language_code=TestConstants.LANGUAGE_CODE,
             version=TestConstants.VERSION,
             year=self.year,
-            file_format=TestConstants.file_format,
+            file_format=TestConstants.FILE_FORMAT,
             api_key=TestConstants.API_KEY,
         )
         if result.status_code == self.expected_status:
@@ -46,4 +47,4 @@ class TestDraftFeeds(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(argv=[""], defaultTest="TestAdditionalFeeds")
+    unittest.main(argv=[""], defaultTest="TestDraftFeeds")

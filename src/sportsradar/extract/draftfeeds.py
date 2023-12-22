@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
-from src.sportradar import logging_helpers
-from src.sportradar.workspace.datastore import DataStore, SportsRadarFetcher
+from src.sportsradar import logging_helpers
+from src.sportsradar.workspace.datastore import DataStore, SportsRadarFetcher
 
 load_dotenv("../../../.env")
 
@@ -36,7 +36,7 @@ class DraftsFeeds:
             raise ValueError("API key not found in environment variables")
         datastore = DataStore(SportsRadarFetcher())
         result = datastore.fetch_data(
-            url=f"{self.base_url}/{access_level}/{version}/{language_code}/{year}/draft.{file_format}?api_key={api_key} "
+            url=f"{self.base_url}/{access_level}/{version}/{language_code}/{year}/draft.{file_format}?api_key={api_key}"
         )
         logger.info("Data retrieved successfully")
         return result
