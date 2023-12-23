@@ -83,7 +83,7 @@ class TestDraftFeeds(unittest.TestCase):
                 response=result,
                 db_uri=TestConstants.MONGODB_URL,
                 database=TestConstants.MONGODB_DATABASE,
-                collection=f'test_get_draft_summary_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+                collection=f'test_get_team_draft_summary_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
             )
         assert (
             result.status_code == self.expected_status

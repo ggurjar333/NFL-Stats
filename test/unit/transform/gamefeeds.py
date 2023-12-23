@@ -16,7 +16,6 @@ class TestGameFeedsTransformer(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.dummy_data = {
-            "_id": "12345",
             "home_team": "Team A",
             "away_team": "Team B",
             "_comment": "10-5",
