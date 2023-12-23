@@ -4,6 +4,7 @@ class DataPreprocessor:
     us to re-use the same transforms in many different contexts without duplicating the
     code.
     """
+
     def __init__(self, data, processor):
         self.data = data
         self.processor = processor
@@ -15,4 +16,3 @@ class DataPreprocessor:
         for key in self.processor:
             if self._key_exists(key):
                 self.data.pop(key)
-

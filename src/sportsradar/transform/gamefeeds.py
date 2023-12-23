@@ -25,13 +25,19 @@ class GameFeedsTransformer:
         self.data = data
 
     def transform_boxscore(self):
-        preprocessor = DataPreprocessor(data=self.data, processor=remove_unwanted_feeds())
+        preprocessor = DataPreprocessor(
+            data=self.data, processor=remove_unwanted_feeds()
+        )
         return preprocessor.data
 
     def transform_game_roster(self):
-        preprocessor = DataPreprocessor(data=self.data, processor=remove_unwanted_feeds())
+        preprocessor = DataPreprocessor(
+            data=self.data, processor=remove_unwanted_feeds()
+        )
         return preprocessor.data
 
     def transform_game_statistics(self):
-        preprocessor = DataPreprocessor(data=self.data, processor=remove_unwanted_feeds())
+        preprocessor = DataPreprocessor(
+            data=self.data, processor=remove_unwanted_feeds()
+        )
         return preprocessor.data
