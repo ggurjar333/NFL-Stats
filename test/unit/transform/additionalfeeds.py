@@ -2,7 +2,7 @@ import os
 import unittest
 from dotenv import load_dotenv
 
-from src.sportsradar.transform.teamfeeds import TeamFeedsTransformer
+from src.sportsradar.transform.additionalfeeds import AdditionalFeedsTransformer
 
 load_dotenv("../../../.env")
 
@@ -12,7 +12,7 @@ class TestConstants:
     MONGODB_DATABASE = f"{os.environ.get('MONGODB_DATABASE')}"
 
 
-class TestTeamFeedsTransformer(unittest.TestCase):
+class TestAdditionalFeedsTransformer(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.dummy_data = {
@@ -20,15 +20,15 @@ class TestTeamFeedsTransformer(unittest.TestCase):
             "away_team": "Team B",
             "_comment": "10-5",
         }
-        self.gft = TeamFeedsTransformer(self.dummy_data)
+        self.gft = AdditionalFeedsTransformer(self.dummy_data)
 
-    def test_transform_team_roster(self):
+    def test_transform_weekly_depth_charts(self):
         # Act
-        result = self.gft.transform_team_roster()
+        result = self.gft.transform_weekly_depth_charts()
 
         # Assert
         self.assertIsInstance(result, dict)
 
 
 if __name__ == "__main__":
-    unittest.main(argv=[""], defaultTest="TestTeamFeedsTransformer")
+    unittest.main(argv=[""], defaultTest="TestAdditionalFeedsTransformer")
