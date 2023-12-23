@@ -31,4 +31,4 @@ class TestPlayerFeedsTransformer(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(argv=[""], defaultTest="TestGameFeedsTransformer")
+    unittest.main(argv=[""], defaultTest="TestPlayerFeedsTransformer")
