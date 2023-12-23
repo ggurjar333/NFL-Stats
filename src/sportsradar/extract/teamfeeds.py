@@ -78,14 +78,14 @@ class TeamFeeds:
         self, access_level, version, language_code, team_id, file_format, api_key
     ):
         """
-        Get the team roster for a given year, nfl_season, and team_id
+        Get the team_profile for a given team_id
         :param access_level:
         :param version:
         :param language_code:
         :param team_id:
         :param file_format:
         :param api_key:
-        :return: The seasonsal statistics feed of the given team_id, nfl_season, and year
+        :return: The team_profile feed of the given year
         """
         if not api_key:
             logger.error("API key not found in environment variables.")
