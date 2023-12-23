@@ -90,7 +90,7 @@ class TestDraftFeeds(unittest.TestCase):
         ), f"Expected status code {self.expected_status}, but got {result.status_code}."
 
     def test_get_top_prospects(self):
-        result = self.draftfeeds.get_team_draft_summary(
+        result = self.draftfeeds.get_top_prospects(
             access_level=TestConstants.ACCESS_LEVEL,
             language_code=TestConstants.LANGUAGE_CODE,
             version=TestConstants.VERSION,
@@ -105,6 +105,27 @@ class TestDraftFeeds(unittest.TestCase):
                 db_uri=TestConstants.MONGODB_URL,
                 database=TestConstants.MONGODB_DATABASE,
                 collection=f'test_get_top_prospects_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_trades(self):
+        result = self.draftfeeds.get_trades(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION,
+            year=self.year,
+            file_format=TestConstants.FILE_FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_trades_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
             )
         assert (
             result.status_code == self.expected_status
