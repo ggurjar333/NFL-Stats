@@ -25,6 +25,7 @@ class TestGameFeedsTransformer(unittest.TestCase):
     def test_transform_boxscore(self):
         # Act
         result = self.gft.transform_boxscore()
+        print(result)
 
         # Assert
         self.assertIsInstance(result, dict)

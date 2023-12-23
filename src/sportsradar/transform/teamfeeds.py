@@ -1,6 +1,4 @@
 from src.sportsradar import logging_helpers
-from src.sportsradar.transform.classes import DataPreprocessor
-from src.sportsradar.transform.params.teamfeeds import remove_unwanted_feeds
 
 logger = logging_helpers.get_logger(__name__)
 
@@ -19,17 +17,20 @@ class TeamFeedsTransformer:
         dict: The transformed team roster data.
     """
 
+    UNWANTED_KEYS = ["_comment"]
+
     def __init__(self, data: dict):
         self.data = data
 
+    def _remove_unwanted_feeds(self):
+        for key in self.UNWANTED_KEYS:
+            if key in self.data:
+                self.data.pop(key)
+
     def transform_team_roster(self):
-        preprocessor = DataPreprocessor(
-            data=self.data, processor=remove_unwanted_feeds()
-        )
-        return preprocessor.data
+        self._remove_unwanted_feeds()
+        return self.data
 
     def transform_seasonal_statistics(self):
-        preprocessor = DataPreprocessor(
-            data=self.data, processor=remove_unwanted_feeds()
-        )
-        return preprocessor.data
+        self._remove_unwanted_feeds()
+        return self.data
