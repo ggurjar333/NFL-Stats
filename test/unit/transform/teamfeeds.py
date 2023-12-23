@@ -29,6 +29,13 @@ class TestTeamFeedsTransformer(unittest.TestCase):
         # Assert
         self.assertIsInstance(result, dict)
 
+    def test_transform_seasonal_statistics(self):
+        # Act
+        result = self.gft.transform_seasonal_statistics()
+
+        # Assert
+        self.assertIsInstance(result, dict)
+
 
 if __name__ == "__main__":
     unittest.main(argv=[""], defaultTest="TestTeamFeedsTransformer")
