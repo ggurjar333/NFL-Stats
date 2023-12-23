@@ -27,3 +27,9 @@ class TeamFeedsTransformer:
             data=self.data, processor=remove_unwanted_feeds()
         )
         return preprocessor.data
+
+    def transform_seasonal_statistics(self):
+        preprocessor = DataPreprocessor(
+            data=self.data, processor=remove_unwanted_feeds()
+        )
+        return preprocessor.data
