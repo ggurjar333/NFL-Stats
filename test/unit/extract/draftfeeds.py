@@ -23,6 +23,7 @@ class TestDraftFeeds(unittest.TestCase):
     def setUp(self):
         self.draftfeeds = DraftsFeeds(base_url=TestConstants.BASE_URL)
         self.year = datetime.now().year - 2
+        self.team_id = "de760528-1dc0-416a-a978-b510d20692ff"
         self.expected_status = 200
 
     def test_get_draft_summary(self):
@@ -61,6 +62,49 @@ class TestDraftFeeds(unittest.TestCase):
                 db_uri=TestConstants.MONGODB_URL,
                 database=TestConstants.MONGODB_DATABASE,
                 collection=f'test_get_prospects {datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_team_draft_summary(self):
+        result = self.draftfeeds.get_team_draft_summary(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION,
+            team_id=self.team_id,
+            year=self.year,
+            file_format=TestConstants.FILE_FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_draft_summary_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
+            )
+        assert (
+            result.status_code == self.expected_status
+        ), f"Expected status code {self.expected_status}, but got {result.status_code}."
+
+    def test_get_top_prospects(self):
+        result = self.draftfeeds.get_team_draft_summary(
+            access_level=TestConstants.ACCESS_LEVEL,
+            language_code=TestConstants.LANGUAGE_CODE,
+            version=TestConstants.VERSION,
+            year=self.year,
+            file_format=TestConstants.FILE_FORMAT,
+            api_key=TestConstants.API_KEY,
+        )
+
+        if result.status_code == self.expected_status:
+            save_data(
+                response=result,
+                db_uri=TestConstants.MONGODB_URL,
+                database=TestConstants.MONGODB_DATABASE,
+                collection=f'test_get_top_prospects_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
             )
         assert (
             result.status_code == self.expected_status
