@@ -52,7 +52,7 @@ class TestAdditionalFeedsTransformer(unittest.TestCase):
 
     def test_transform_weekly_injuries(self):
         # Act
-        result = self.gft.transform_weekly_injuries
+        result = self.gft.transform_weekly_injuries()
 
         # Assert
         self.assertIsInstance(result, dict)
