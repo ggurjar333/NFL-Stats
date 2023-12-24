@@ -2,6 +2,7 @@ from src.sportsradar import logging_helpers
 
 logger = logging_helpers.get_logger(__name__)
 
+
 class DraftFeedsTransformer:
     """
     DraftFeedsTransformer class is used to transform draft feeds data.

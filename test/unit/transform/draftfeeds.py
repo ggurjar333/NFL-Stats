@@ -1,6 +1,7 @@
 import os
 import unittest
 from dotenv import load_dotenv
+from src.sportsradar.transform.draftfeeds import DraftFeedsTransformer
 
 
 load_dotenv("../../../.env")
@@ -11,7 +12,7 @@ class TestConstants:
     MONGODB_DATABASE = f"{os.environ.get('MONGODB_DATABASE')}"
 
 
-class DraftFeedsTransformer(unittest.TestCase):
+class TestDraftFeedsTransformer(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.dummy_data = {
@@ -30,28 +31,32 @@ class DraftFeedsTransformer(unittest.TestCase):
 
     def test_transform_prospects(self):
         # Act
-        result = self._remove_unwanted_feeds()
+        result = self.gft.transform_prospects()
 
         # Assert
         self.assertIsInstance(result, dict)
 
     def test_transform_team_draft_summary(self):
         # Act
-        result = self._remove_unwanted_feeds()
+        result = self.gft.transform_team_draft_summary()
 
         # Assert
         self.assertIsInstance(result, dict)
 
     def test_transform_top_prospects(self):
         # Act
-        result = self._remove_unwanted_feeds()
+        result = self.gft.transform_top_prospects()
 
         # assert
         self.assertIsInstance(result, dict)
 
     def test_transform_trades(self):
         # Act
-        result = self._remove_unwanted_feeds()
+        result = self.gft.transform_trades()
 
         # assert
         self.assertIsInstance(result, dict)
+
+
+if __name__ == "__main__":
+    unittest.main(argv=[""], defaultTest="TestDraftFeedsTransformer")
