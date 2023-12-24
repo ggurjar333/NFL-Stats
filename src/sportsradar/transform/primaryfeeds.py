@@ -1,9 +1,9 @@
 from src.sportsradar import logging_helpers
 
-logger = logging_helpers(__name__)
+logger = logging_helpers.get_logger(__name__)
 
 
-class PlayerFeedsTransformer:
+class PrimaryFeedsTransformer:
     """
     Class to transform player feeds data.
 
@@ -14,12 +14,13 @@ class PlayerFeedsTransformer:
         data (dict): The game feeds data dictionary.
 
     Methods:
-
+        transform_current_season_schedule: Transform the current schedule data
+        ransform_current_week_schedule : Transform the current week schedule data
     """
 
     UNWANTED_KEYS = ["_comment"]
 
-    def _init__(self, data: dict):
+    def __init__(self, data: dict):
         self.data = data
 
     def _remove_unwanted_feeds(self):
