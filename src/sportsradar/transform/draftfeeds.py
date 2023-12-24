@@ -7,14 +7,21 @@ class DraftFeedsTransformer:
     """
     DraftFeedsTransformer class is used to transform draft feeds data.
 
+    Attributes:
+        UNWANTED_KEYS (list): List of unwanted keys to be removed from the data dictionary.
+
     Args:
         data (dict): A dictionary containing draft feeds data.
 
     Methods:
-        transform_weekly_depth_charts(): Transforms the weekly depth charts data by removing unwanted feeds.
+        transform_draft_summary(): Transforms the draft summary.
+        transform_prospects: Transforms the prospects' data.
+        transform_team_draft_summary(): Transforms the team draft summary data.
+        transform_top_prospects(): Transforms the top prospects' data.
+        transform_trades(): Transforms the trades' data.
 
     Returns:
-        dict: The transformed team weekly depth charts.
+        dict: The transformed data into dictionary.
     """
 
     UNWANTED_KEYS = ["_comment"]
