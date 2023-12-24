@@ -46,3 +46,7 @@ class AdditionalFeedsTransformer:
     def transform_seasons(self):
         self._remove_unwanted_feeds()
         return self.data
+
+    def transform_weekly_injuries(self):
+        self._remove_unwanted_feeds()
+        return self.data

@@ -43,9 +43,16 @@ class TestAdditionalFeedsTransformer(unittest.TestCase):
         # Assert
         self.assertIsInstance(result, dict)
 
-    def test_transform_seasoms(self):
+    def test_transform_seasons(self):
         # Act
         result = self.gft.transform_seasons()
+
+        # Assert
+        self.assertIsInstance(result, dict)
+
+    def test_transform_weekly_injuries(self):
+        # Act
+        result = self.gft.transform_weekly_injuries
 
         # Assert
         self.assertIsInstance(result, dict)
