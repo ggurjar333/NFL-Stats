@@ -30,3 +30,19 @@ class AdditionalFeedsTransformer:
     def transform_weekly_depth_charts(self):
         self._remove_unwanted_feeds()
         return self.data
+
+    def transform_daily_change_log(self):
+        self._remove_unwanted_feeds()
+        return self.data
+
+    def transform_daily_transactions(self):
+        self._remove_unwanted_feeds()
+        return self.data
+
+    def transform_league_hierarchy(self):
+        self._remove_unwanted_feeds()
+        return self.data
+
+    def transform_seasons(self):
+        self._remove_unwanted_feeds()
+        return self.data
