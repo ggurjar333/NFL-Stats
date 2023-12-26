@@ -54,6 +54,10 @@ class AdditionalFeedsTransformer:
         self._remove_unwanted_feeds()
         return self.data
 
+    def transform_postgame_standings(self):
+        self._remove_unwanted_feeds()
+        return self.data
+
     def transform_seasons(self):
         self._remove_unwanted_feeds()
         return self.data
