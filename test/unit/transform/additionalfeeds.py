@@ -43,6 +43,20 @@ class TestAdditionalFeedsTransformer(unittest.TestCase):
         # Assert
         self.assertIsInstance(result, dict)
 
+    def test_tranform_league_hierachy(self):
+        # Act
+        result = self.gft.transform_league_hierarchy()
+
+        # Assert
+        self.assertIsInstance(result, dict)
+
+    def test_transform_postgame_standings(self):
+        # Act
+        result = self.gft.transform_postgame_standings()
+
+        # Assert
+        self.assertIsInstance(result, dict)
+
     def test_transform_seasons(self):
         # Act
         result = self.gft.transform_seasons()
@@ -52,7 +66,7 @@ class TestAdditionalFeedsTransformer(unittest.TestCase):
 
     def test_transform_weekly_injuries(self):
         # Act
-        result = self.gft.transform_weekly_injuries
+        result = self.gft.transform_weekly_injuries()
 
         # Assert
         self.assertIsInstance(result, dict)
