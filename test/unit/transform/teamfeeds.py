@@ -36,6 +36,13 @@ class TestTeamFeedsTransformer(unittest.TestCase):
         # Assert
         self.assertIsInstance(result, dict)
 
+    def test_transform_team_profile(self):
+        # Act
+        result = self.gft.transform_team_profile()
+
+        # Assert
+        self.assertIsInstance(result, dict)
+
 
 if __name__ == "__main__":
     unittest.main(argv=[""], defaultTest="TestTeamFeedsTransformer")

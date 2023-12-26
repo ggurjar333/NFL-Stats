@@ -34,3 +34,7 @@ class TeamFeedsTransformer:
     def transform_seasonal_statistics(self):
         self._remove_unwanted_feeds()
         return self.data
+
+    def transform_team_profile(self):
+        self._remove_unwanted_feeds()
+        return self.data
