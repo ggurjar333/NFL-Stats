@@ -237,7 +237,7 @@ class RedisCache(AbstractCache):
             return None
 
 
-# python
+# TODO: under progress and testing needs to be done thoroughly
 
 # Create an instance of RedisCache
 try:
