@@ -1,7 +1,6 @@
 import datetime
 from abc import ABC, abstractmethod
 from typing import Any, NamedTuple, Optional, cast
-import os
 from dotenv import load_dotenv, find_dotenv
 import redis
 import json
@@ -203,28 +202,28 @@ class RedisCache(AbstractCache):
         return bool(self._db.exists(str(resource)))
 
 
-# # example usage
-document_to_store = {
-    "name": "John",
-    "documents": [
-        {"title": "Doc 1", "content": "Content 1"},
-        {"title": "Doc 2", "content": "Content 2"},
-    ],
-}
-
-redis_host = os.getenv("REDIS_HOST_GG")
-redis_port = os.getenv("REDIS_PORT_GG")
-redis_pass = os.getenv("REDIS_PASS_GG")
-
-nfl_stats_resource_key = NFLStatsResourceKey()
-
-redis_cache = RedisCache(host=redis_host, port=redis_port, password=redis_pass)
-
-redis_cache.add(resource=nfl_stats_resource_key, value=document_to_store)
-
-try:
-    retrieved_content = redis_cache.get(resource=nfl_stats_resource_key)
-    print(retrieved_content)
-
-except KeyError:
-    print("Resource not found in the Redis cache")
+# example usage
+# document_to_store = {
+#     "name": "John",
+#     "documents": [
+#         {"title": "Doc 1", "content": "Content 1"},
+#         {"title": "Doc 2", "content": "Content 2"},
+#     ],
+# }
+#
+# redis_host = os.getenv("REDIS_HOST_GG")
+# redis_port = os.getenv("REDIS_PORT_GG")
+# redis_pass = os.getenv("REDIS_PASS_GG")
+#
+# nfl_stats_resource_key = NFLStatsResourceKey()
+#
+# redis_cache = RedisCache(host=redis_host, port=redis_port, password=redis_pass)
+#
+# redis_cache.add(resource=nfl_stats_resource_key, value=document_to_store)
+#
+# try:
+#     retrieved_content = redis_cache.get(resource=nfl_stats_resource_key)
+#     print(retrieved_content)
+#
+# except KeyError:
+#     print("Resource not found in the Redis cache")
