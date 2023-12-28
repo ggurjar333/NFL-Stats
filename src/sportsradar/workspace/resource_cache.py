@@ -1,294 +1,230 @@
-"""Implementations of datastore resource caches."""
+import datetime
 from abc import ABC, abstractmethod
-from typing import Any, Dict
-
+from typing import Any, NamedTuple, Optional, cast
+import os
+from dotenv import load_dotenv, find_dotenv
 import redis
 import json
-import traceback
 
-import src.sportsradar.logging_helpers
+from src.sportsradar.logging_helpers import get_logger
 
-logger = src.sportsradar.logging_helpers.get_logger(__name__)
-
-
-class NFLStatsResourceKey(Dict):
-    """Uniquely identifies a specific resource."""
-
-    def __dict__(self):
-        # Convert the NFLStatsResourceKey instance to a dict representation
-        return self.values()
+logger = get_logger(__name__)
+load_dotenv(find_dotenv())
 
 
-# class NFLStatsResourceKey(NamedTuple):
-#     """Uniquely identifies a specific resource."""
-#
-#     def to_dict(self):
-#         # Convert the NFLStatsResourceKey instance to a dictionary representation
-#         return self._asdict()
-#
-#     def __str__(self):
-#         # Convert the NFLStatsResourceKey instance to a string representation
-#         return "some_string_representation"
+class NFLStatsResourceKey(NamedTuple):
+    """
+    Represents a resource key for NFL statistics.
 
+    Attributes:
+        None
 
-def add(self, resource: NFLStatsResourceKey, value: bytes):
-    """Adds (or updates) resource to the cache with given value."""
-    if self.is_read_only():
-        logger.debug(f"Read only cache: ignoring set({resource})")
-        return
-    self._db.set(str(resource), value)
+    Methods:
+        __str__(): Returns the string representation of the resource key.
 
+    Usage:
+        resource_key = NFLStatsResourceKey()
+        key_str = str(resource_key)
+    """
 
-def get(self, resource: NFLStatsResourceKey) -> bytes:
-    """Retrieves value associated with a given resource."""
-    value = self._db.get(str(resource))
-    if value is None:
-        raise KeyError(f"Resource {resource} not found in the Redis cache")
-    return value
-
-
-def delete(self, resource: NFLStatsResourceKey):
-    """Deletes resource from the cache."""
-    if self.is_read_only():
-        logger.debug(f"Read only cache: ignoring delete({resource})")
-        return
-    self._db.delete(str(resource))
-
-
-def contains(self, resource: NFLStatsResourceKey) -> bool:
-    """Returns True if resource is present in the cache."""
-    return bool(self._db.exists(str(resource)))
+    def __str__(self) -> str:
+        return "NFLStats_" + datetime.date.today().strftime("%Y-%m-%d")
 
 
 class AbstractCache(ABC):
-    """Defines interface for the generic resource caching layer."""
+    """
+    AbstractCache
+
+    This class is an abstract base class for cache implementations. It defines the common interface that all cache implementations should adhere to.
+
+    Attributes:
+        _read_only (bool): Indicates whether the cache is read-only or not.
+
+    Methods:
+        __init__(self, read_only: bool = False):
+            Initializes the AbstractCache object.
+
+            Args:
+                read_only (bool, optional): Indicates whether the cache is read-only. Defaults to False.
+
+        is_read_only(self) -> bool:
+            Returns the read-only status of the cache.
+
+            Returns:
+                bool: True if the cache is read-only, False otherwise.
+
+        get(self, resource: NFLStatsResourceKey) -> Any:
+            Retrieves the content associated with the given resource key from the cache.
+
+            Args:
+                resource (NFLStatsResourceKey): The resource key to retrieve the content for.
+
+            Returns:
+                Any: The content associated with the given resource key.
+
+        add(self, resource: NFLStatsResourceKey, content: Any) -> None:
+            Adds the content to the cache under the given resource key.
+
+            Args:
+                resource (NFLStatsResourceKey): The resource key to add the content under.
+                content (Any): The content to be added to the cache.
+
+            Returns:
+                None
+
+        delete(self, resource: NFLStatsResourceKey) -> None:
+            Deletes the content associated with the given resource key from the cache.
+
+            Args:
+                resource (NFLStatsResourceKey): The resource key to delete the content for.
+
+            Returns:
+                None
+
+        contains(self, resource: NFLStatsResourceKey) -> bool:
+            Checks whether the cache contains the content associated with the given resource key.
+
+            Args:
+                resource (NFLStatsResourceKey): The resource key to check for.
+
+            Returns:
+                bool: True if the cache contains the content for the given resource key, False otherwise.
+    """
 
     def __init__(self, read_only: bool = False):
-        """Constructs instance and sets read-only attribute."""
         self._read_only = read_only
 
     def is_read_only(self) -> bool:
-        """Returns true if the cache is read-only and should not be modified."""
         return self._read_only
 
     @abstractmethod
-    def get(self, resource: NFLStatsResourceKey) -> bytes:
-        """Retrieves content of the given resource or throws KeyError."""
+    def get(self, resource: NFLStatsResourceKey) -> Any:
         pass
 
     @abstractmethod
-    def add(self, resource: NFLStatsResourceKey, content: bytes) -> None:
-        """Adds resource to the cache and sets the content."""
+    def add(self, resource: NFLStatsResourceKey, content: Any) -> None:
         pass
 
     @abstractmethod
     def delete(self, resource: NFLStatsResourceKey) -> None:
-        """Removes the resource from cache."""
         pass
 
     @abstractmethod
     def contains(self, resource: NFLStatsResourceKey) -> bool:
-        """Returns True if the resource is present in the cache."""
         pass
 
 
-class LayeredCache(AbstractCache):
-    """Implements multi-layered system of caches.
+class RedisCache(AbstractCache):
+    """
+    RedisCache
 
-    This allows building multi-layered system of caches. The idea is that you can have
-    faster local cache with fall-back to the more remote or expensive caches that can
-    be accessed in case of missing content.
+    A class that represents a cache using Redis as the underlying storage.
 
-    Only the closest layer is being written to (set, delete), while all remaining layers
-    are read-only (get).
+    Methods:
+        - get(resource: NFLStatsResourceKey) -> Any:
+            Retrieves the value associated with the given resource key from the cache.
+            If the key does not exist in the cache, a KeyError is raised.
+
+        - add(resource: NFLStatsResourceKey, value: Any):
+            Adds the given resource key-value pair to the cache.
+            If the cache is read-only, the operation is ignored.
+
+        - delete(resource: NFLStatsResourceKey):
+            Deletes the value associated with the given resource key from the cache.
+            If the cache is read-only, the operation is ignored.
+
+        - contains(resource: NFLStatsResourceKey) -> bool:
+            Checks whether the cache contains the given resource key.
+
+    Parameters:
+        - host: Optional[str] = None
+            The host address of the Redis server. If not provided, the default value is None.
+
+        - port: Optional[str] = None
+            The port number of the Redis server. If not provided, the default value is None.
+
+        - password: Optional[str] = None
+            The password to authenticate with the Redis server. If not provided, the default value is None.
+
+        - **kwargs: Any
+            Additional keyword arguments to customize the cache.
+
+    Attributes:
+        - _db: redis.StrictRedis
+            The Redis client used for interacting with the Redis server.
+
+    Note:
+        This class is designed to be used as a subclass of AbstractCache.
+        It assumes the existence of the Redis package in the Python environment.
+        The Redis server must be accessible for the cache operations to work.
+
+    Example usage:
+        cache = RedisCache(host='localhost', port='6379', password='password')
+        cache.add('resource_key', {'data': 'value'})
+        value = cache.get('resource_key')
+        cache.contains('resource_key')
+
+    Caution:
+        Be cautious when using this cache implementation with sensitive data as Redis is an in-memory database.
+        Ensure proper security measures are in place to protect the data stored in Redis.
     """
 
-    def __init__(self, *caches: list[AbstractCache], **kwargs: Any):
-        """Creates layered cache consisting of given cache layers.
-
-        Args:
-            caches: List of caching layers to uses. These are given in the order
-            of decreasing priority.
-        """
+    def __init__(
+        self,
+        host: Optional[str] = None,
+        port: Optional[str] = None,
+        password: Optional[str] = None,
+        **kwargs: Any,
+    ):
         super().__init__(**kwargs)
-        self._caches: list[AbstractCache] = list(caches)
+        self._db = redis.StrictRedis(
+            host=cast(str, host), port=cast(str, port), password=cast(str, password)
+        )
 
-    def add_cache_layer(self, cache: AbstractCache):
-        """Adds a cache layer.
-
-        The priority is below all other.
-        """
-        self._caches.append(cache)
-
-    def num_layers(self):
-        """Returns the number of caching layers that are in this LayeredCache."""
-        return len(self._caches)
-
-    def get(self, resource: NFLStatsResourceKey) -> bytes:
-        """Returns the content of a given resource."""
-        for i, cache in enumerate(self._caches):
-            if cache.contains(str(resource)):
-                logger.debug(
-                    f"get:{resource} found in {i}-th layer ({cache.__class__.__name__})."
-                )
-                return cache.get(resource)
-            logger.debug(f"get:{resource} not found in the layered cache.")
-            raise KeyError(f"{resource} not found in the layered cache.")
-
-    def add(self, resource: NFLStatsResourceKey, value):
-        """Adds (or replaces) resource into the cache with given value."""
-        if self.is_read_only():
-            logger.debug(f"Read only cache: ignoring set({resource})")
-            return
-        for cache_layer in self._caches:
-            if cache_layer.is_read_only():
-                continue
-            cache_layer.add(
-                str(resource), value
-            )  # Convert the NFLStatsResourceKey to string
-            logger.debug(
-                f"Add {resource} to cache layer {cache_layer.__class__.__name__}"
-            )
-            break
-
-    def delete(self, resource: NFLStatsResourceKey):
-        """Removes resource from the cache if the cache is not in the read_only mode."""
-        if self.is_read_only():
-            logger.debug(f"Read only cache: ignoring delete({resource})")
-            return
-        for cache_layer in self._caches:
-            if cache_layer.is_read_only():
-                continue
-            cache_layer.delete(str(resource))
-            break
-
-    def contains(self, resource: NFLStatsResourceKey) -> bool:
-        """Returns True if resource is present in the cache."""
-        for i, cache_layer in enumerate(self._caches):
-            if cache_layer.contains(str(resource)):
-                logger.debug(
-                    f"contains:{resource} found in {i}-th layer ({cache_layer.__class__.__name__})."
-                )
-                return True
-        logger.debug(f"contains: {resource} not found in the layered cache.")
-        return False
-
-    def is_optionally_cached(self, resource: NFLStatsResourceKey) -> bool:
-        """Returns True if resource is contained in the closest write-enabled layer."""
-        for cache_layer in self._caches:
-            if cache_layer.is_read_only():
-                continue
-            logger.debug(
-                f"{resource} is optionally cached in {cache_layer.__class__.__name__}"
-            )
-            return cache_layer.contains(resource)
-
-
-class RedisCache(AbstractCache):
-    """Implements cache system using Redis server."""
-
-    def __init__(self, host="localhost", port=6379, **kwargs: Any):
-        """Constructs a RedisCache instance."""
-        super().__init__(**kwargs)
-        self._db = redis.StrictRedis(host=host, port=port)
-
-    def get(self, resource: NFLStatsResourceKey) -> bytes:
-        """Retrieves value associated with a given resource."""
+    def get(self, resource: NFLStatsResourceKey) -> Any:
         value = self._db.get(str(resource))
         if value is None:
-            raise KeyError(f"Resource {resource} not found in the Redis cache")
-        return value
+            raise KeyError(f"Resource - {resource} not found in the Redis cache")
+        return json.loads(value)
 
-    def add(self, resource: NFLStatsResourceKey, value: bytes):
-        """Adds (or updates) resource to the cache with given value."""
+    def add(self, resource: NFLStatsResourceKey, value: Any):
         if self.is_read_only():
-            logger.debug(f"Read only cache: ignoring set({resource})")
+            logger.debug(f"Read-only cache: ignoring set({resource})")
             return
-        self._db.set(str(resource), value)
+        self._db.set(str(resource), json.dumps(value))
 
     def delete(self, resource: NFLStatsResourceKey):
-        """Deletes resource from the cache."""
         if self.is_read_only():
-            logger.debug(f"Read only cache: ignoring delete({resource})")
+            logger.debug(f"Read-only cache: ignoring delete({resource})")
             return
         self._db.delete(str(resource))
 
     def contains(self, resource: NFLStatsResourceKey) -> bool:
-        """Returns True if resource is present in the cache."""
         return bool(self._db.exists(str(resource)))
 
-    def put_dict(self, key, dictionary):
-        """Store a dictionary in the Redis."""
-        try:
-            dict_json = json.dumps(dictionary)
-            self._db.set(key, dict_json)
-        except Exception as e:
-            logger.error(f"Failed to put dict in Redis: {str(e)}")
 
-    def get_dict(self, key):
-        """Retrieve a dictionary from the Redis."""
-        try:
-            dict_json = self._db.get(key)
-            if dict_json is None:
-                return None
-            return json.loads(dict_json)
-        except Exception as e:
-            logger.error(f"Failed to put dict in Redis: {str(e)}")
-            return None
+# # example usage
+document_to_store = {
+    "name": "John",
+    "documents": [
+        {"title": "Doc 1", "content": "Content 1"},
+        {"title": "Doc 2", "content": "Content 2"},
+    ],
+}
 
+redis_host = os.getenv("REDIS_HOST_GG")
+redis_port = os.getenv("REDIS_PORT_GG")
+redis_pass = os.getenv("REDIS_PASS_GG")
 
-# TODO: under progress and testing needs to be done thoroughly
+nfl_stats_resource_key = NFLStatsResourceKey()
 
-# Create an instance of RedisCache
+redis_cache = RedisCache(host=redis_host, port=redis_port, password=redis_pass)
+
+redis_cache.add(resource=nfl_stats_resource_key, value=document_to_store)
+
 try:
-    redis_cache = RedisCache()
-except Exception:
-    print("Failed to create Redis cache")
-    traceback.print_exc()
+    retrieved_content = redis_cache.get(resource=nfl_stats_resource_key)
+    print(retrieved_content)
 
-# Check all the operations: add, get, contains and delete
-try:
-    # Create a 'LayeredCache' with the redis cache as its only layer
-    layered_cache = LayeredCache(redis_cache)
-    # Create a resource key
-    resource_key = NFLStatsResourceKey()  # Initialize it properly
-    # Add a resource to the layered cache
-    layered_cache.add(resource_key, f"{'abc':123}")
-
-    # Check if the resource exists in the cache
-    if layered_cache.contains(resource_key):
-        print("Resource exists in the cache.")
-        # Get the resource value
-        value = layered_cache.get(resource_key)
-        print(f"Value: {value}")
-    # Delete the resource
-    if layered_cache.contains(resource_key):
-        print(f"Deleting the resource: {resource_key.values()}")
-        layered_cache.delete(resource_key)
-except Exception:
-    print("An error occurred during cache operations.")
-    traceback.print_exc()
-
-
-# # Create an instance of RedisCache
-# redis_cache = RedisCache()
-#
-# # Create a 'LayeredCache' with the redis cache as its only layer
-# layered_cache = LayeredCache(redis_cache)
-#
-# # Create a resource key
-# resource_key = NFLStatsResourceKey()
-#
-# # Add a resource to the layered cache
-# layered_cache.add(resource_key, b"Some content")
-#
-# # Check if the resource exists in the cache
-# if layered_cache.contains(resource_key):
-#     print("Resource exists in the cache.")
-#
-# # Get the resource value
-# value = layered_cache.get(resource_key)
-# print(f'Value: {value}')
-#
-# # Delete the resource
-# layered_cache.delete(resource_key)
+except KeyError:
+    print("Resource not found in the Redis cache")

@@ -1,64 +1,62 @@
-# These are the unit tests for the `resource_cache.py` module
-# As we are going to interact with a database, remember to setup
-# and tear down your test environment properly.
-
 import unittest
-from unittest.mock import patch, MagicMock
+import os
+
 from src.sportsradar.workspace.resource_cache import (
-    NFLStatsResourceKey,
     AbstractCache,
-    LayeredCache,
     RedisCache,
+    NFLStatsResourceKey,
 )
 
 
-class TestResourceCache(unittest.TestCase):
-    """
-    Test cases for testing the cache mechanisms implemented in the resource_cache.py
-    """
+class TestCache(unittest.TestCase):
+    def setUp(self):
+        self.setup_documents()
+        self.setup_environment_variables()
 
-    def setUp(self) -> None:
-        """Set up test fixtures, if any."""
-        self.resource_key = NFLStatsResourceKey()
-        self.resource_value = b"This is a test"
+    def setup_documents(self):
+        self.document_to_store = {
+            "name": "John",
+            "documents": [
+                {"title": "Doc 1", "content": "Content 1"},
+                {"title": "Doc 2", "content": "Content 2"},
+            ],
+        }
 
-    def tearDown(self) -> None:
-        """Tear down test fixtures, if any."""
-        pass
+    def setup_environment_variables(self):
+        self.redis_host = os.getenv("REDIS_HOST_GG", "localhost")
+        self.redis_port = os.getenv("REDIS_PORT_GG", 6379)
+        self.redis_pass = os.getenv("REDIS_PASS_GG", "")
 
-    @patch("redis.StrictRedis")
-    def test_redis_cache(self, mock_redis):
-        """Test RedisCache implementation"""
-        cache = RedisCache()
-        mock_redis.exists.return_value = False
-        self.assertEqual(cache.contains(self.resource_key), False)
-        mock_redis.set.return_value = None
-        cache.add(self.resource_key, self.resource_value)
-        mock_redis.get.return_value = self.resource_value
-        self.assertEqual(cache.get(self.resource_key), self.resource_value)
-        mock_redis.delete.return_value = None
-        cache.delete(self.resource_key)
+        # Let's check if Redis server is available
+        try:
+            cache = RedisCache(
+                host=self.redis_host, port=self.redis_port, password=self.redis_pass
+            )
+            assert cache is not None
+        except Exception as e:
+            self.fail(f"Redis server is not available because of this error: {e}")
 
-    @patch.object(AbstractCache, "__abstractmethods__", set())
     def test_abstract_cache(self):
-        """Test AbstractCache implementation"""
-        cache = AbstractCache()
-        with self.assertRaises(KeyError):
-            cache.get(
-                "nonexistent resource key"
-            )  # This key does not exist in the cache
+        with self.assertRaises(TypeError):
+            AbstractCache()
 
-    def test_layered_cache(self):
-        """Test LayeredCache implementation"""
-        # Mocking a AbstractCache object
-        cache = MagicMock(spec=AbstractCache)
+    def test_nfl_stats_resource_key(self):
+        key = NFLStatsResourceKey()
+        self.assertEqual(str(key), str(key))
 
-        cache.contains.return_value = True  # Ensure the key exists in the cache
-        cache.get.return_value = self.resource_value
+    def test_redis_cache(self):
+        key = NFLStatsResourceKey()
+        cache = RedisCache(
+            host=self.redis_host, port=self.redis_port, password=self.redis_pass
+        )
+        result = cache.get(resource=key)
+        print(result)
+        self.assertEqual(result, self.document_to_store)
 
-        layered_cache = LayeredCache(cache)
-        layered_cache.add(self.resource_key, self.resource_value)
-        self.assertEqual(layered_cache.get(self.resource_key), self.resource_value)
+        cache.add(resource=key, value=self.document_to_store)
+        cache.delete(resource=key)
+
+        self.assertFalse(cache.contains(key))
 
 
 if __name__ == "__main__":
