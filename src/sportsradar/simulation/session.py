@@ -4,11 +4,11 @@ from src.sportsradar.simulation.config import Config
 
 def create_session(url: str, recording_id: str):
     """
-    Function to create a session by making a POST request.
+    Creates a session for the given recording ID.
 
-    :param url: The endpoint to which the request is sent.
-    :param recording_id: The ID of the recording for which to create a session.
-    :return: Response object
+    :param url: The URL to send the POST request to.
+    :param recording_id: The ID of the recording.
+    :return: The response from the API, or None if the request failed.
     """
     headers = {
         "Content-Type": f"application/{Config.CONTENT_TYPE}",

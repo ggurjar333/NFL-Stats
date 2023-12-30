@@ -8,7 +8,32 @@ logger = logging_helpers.get_logger(__name__)
 
 
 class AvailableRecordings:
-    """Handle operations related to available recordings"""
+    """
+    Module containing the `AvailableRecordings` class for fetching recordings from an API.
+
+    :class:`AvailableRecordings`:
+        This class provides methods to interact with an API for fetching available recordings.
+
+        :ivar base_url: The base URL for the API.
+
+        :ivar NFL_LEAGUE: Class attribute representing the NFL league.
+
+        :method:`__init__`:
+            Initializes the instance of `AvailableRecordings`.
+
+            :param base_url: The base URL for the API.
+
+        :method:`construct_query`:
+            Formulates the GraphQL query for fetching recordings and returns it.
+
+            :return: The GraphQL query string for fetching recordings.
+
+        :method:`post_json_data`:
+            Sends a POST request with JSON data and GraphQL query.
+
+            :param query: The GraphQL query to be sent in the request.
+            :param league: The specific league to fetch. Default is `NFL_LEAGUE`.
+    """
 
     NFL_LEAGUE = "nfl"
 
