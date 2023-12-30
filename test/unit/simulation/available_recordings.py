@@ -2,11 +2,12 @@ import unittest
 from unittest.mock import patch, Mock
 import requests
 from src.sportsradar.simulation.available_recordings import AvailableRecordings
+from src.sportsradar.simulation.config import Config
 
 
 class TestAvailableRecordings(unittest.TestCase):
     def setUp(self):
-        self.rec = AvailableRecordings("https://playback.sportradar.com/graphql")
+        self.rec = AvailableRecordings(Config.BASE_URL)
 
     def test_construct_query(self):
         query = self.rec.construct_query()
@@ -25,8 +26,8 @@ class TestAvailableRecordings(unittest.TestCase):
 
         # asserts POST call was made with exactly these arguments
         mock_post.assert_called_with(
-            "https://playback.sportradar.com/graphql",
-            headers={"Content-Type": "application/json"},
+            Config.BASE_URL,
+            headers={"Content-Type": f"application/{Config.FORMAT}"},
             json={"query": query, "variables": {"league": "nfl"}},
         )
 
@@ -43,8 +44,8 @@ class TestAvailableRecordings(unittest.TestCase):
 
         # asserts POST call was made with exactly these arguments
         mock_post.assert_called_with(
-            "https://playback.sportradar.com/graphql",
-            headers={"Content-Type": "application/json"},
+            Config.BASE_URL,
+            headers={"Content-Type": f"application/{Config.FORMAT}"},
             json={"query": query, "variables": {"league": "nfl"}},
         )
 
