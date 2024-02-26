@@ -4,19 +4,6 @@ import os
 import requests
 
 from dagster import asset
-from sportradar.simulation.available_recordings import AvailableRecordings
-
-
-@asset(group_name="NFL", compute_kind="SportRadar API")
-def get_available_recordings() -> None:
-    url = "https://playback.sportradar.com/graphql"
-    rec = AvailableRecordings(url)
-    query = rec.construct_query()
-    data = rec.post_json_data(query).json()
-    current_date = datetime.now().strftime("%Y%m%d")
-    os.makedirs("data", exist_ok=True)
-    with open(f"data/simulation_{current_date}.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 @asset(group_name="NFL", compute_kind="MongoDB Zepor")
@@ -42,7 +29,6 @@ def get_game_feeds() -> None:
 
     print(response.text)
 
-    # data = get_data_from_mongodb(db_uri=url, database=database, collection=collection)
     os.makedirs("zepor-database", exist_ok=True)
     with open(
         f"zepor-database/GameFeed_{current_date}.txt", "w", encoding="utf-8"
