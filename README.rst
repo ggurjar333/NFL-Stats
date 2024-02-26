@@ -23,6 +23,14 @@ Dependencies
 -----------------------------
 To discover the various Python packages used in this project, you are advised to refer to the ``requirements.txt`` file found in the project's root directory.
 
+Installation
+-----------------------------
+To setup environment for the first time,
+
+- Run the bash script ``init.sh`` in the root directory and wait for the successful execution.
+- Run the bash script ``run.sh`` in the root directory.
+
+
 Features Release
 -----------------
 This project continues to expand and improve by implementing new features to enhance data analysis. Included in the latest release are the following updates:
