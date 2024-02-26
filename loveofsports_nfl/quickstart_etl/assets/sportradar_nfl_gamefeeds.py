@@ -9,12 +9,12 @@ from dagster import asset, MaterializeResult, AssetExecutionContext, MetadataVal
 headers = {
     "Content-Type": "application/json",
     "Access-Control-Request-Headers": "*",
-    "api-key": "7tth2t3D4zPR1MG0mFi337kIpcQijIojPxH1oKMh6aHpvi648Dq2THEUZUwHX2lO",
+    "api-key": os.getenv("MONGO_DB_API_KEY"),
 }
 current_date = datetime.now().strftime("%Y%m%d")
-dataSource = "Zepor"
-database = "Current_Season"
-url = "https://eastus2.azure.data.mongodb-api.com/app/data-dbjkj/endpoint/data/v1/action/find"
+dataSource = os.getenv("DATASOURCE")
+database = os.getenv("MONGO_DATABASE")
+url = os.getenv("MONGO_DB_DATA_API")
 
 
 @asset(group_name="NFL", compute_kind="MongoDB Zepor")
